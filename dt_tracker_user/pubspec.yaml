@@ -10,6 +10,7 @@ dependencies:
   firebase_auth: ^4.14.1
   firebase_core: ^2.23.0
   firebase_database: ^10.3.5
+  scrollable_reorderable_navbar: ^0.0.2
   flutter:
     sdk: flutter
 
