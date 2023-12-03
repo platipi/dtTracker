@@ -1,4 +1,8 @@
+import 'dart:ffi';
+import 'dart:js_util';
 import 'dart:math';
+
+import 'package:dt_tracker_user/data/unit_health.dart';
 
 enum UnitType { wildcard, base, mook }
 
@@ -10,7 +14,17 @@ class APType {
   double softDmgMod = 1;
   double hardArmorMod = 1;
   double hardDmgMod = 1;
-  Function extraEffect = (var info) => (); //isHard, armor, health
+  Function extraEffect = (APInfo info, UnitHealth unit) =>
+      (); //return APInfo, do inheritance crap on unit
+}
+
+class APInfo {
+  bool isBar = false;
+  bool isHard;
+  int armor = 0;
+  int dmg = 0;
+
+  APInfo(this.isBar, this.isHard, this.armor, this.dmg);
 }
 
 int objtoint(var obj) {

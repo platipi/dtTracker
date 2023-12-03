@@ -1,3 +1,4 @@
+import 'dart:js_util';
 import 'dart:math';
 import 'package:dt_tracker_user/data/data_types.dart';
 
@@ -7,7 +8,7 @@ void main() {
   }
 }
 
-class Unit {
+class UnitHealth {
   String name = "Unnamed";
   UnitType unitType = UnitType.base;
   List<ArmorLocation> armor = List.filled(6, ArmorLocation());
@@ -35,17 +36,16 @@ class Unit {
       for (var o = 0; i < bar[i].locations.length; o++) {
         tempdmg = damage;
         if (bar[i].locations[o] == location) {
+          //extra effect
+          APInfo info = APInfo(true, true, bar[i].sp, damage);
+          apType.extraEffect(info, newObject<UnitHealth>());
+          damage = info.dmg;
+
           //damage - barrier
           damage -= (bar[i].sp * apType.hardArmorMod).floor();
           damage = max(damage, 0);
 
-          //extra effect
-          var info = {
-            //isHard, armor, health
-            'isHard': true, 'armor': bar[i].sp, 'health': 0
-          };
-          apType.extraEffect(info);
-          bar[i].sp = objtoint(info['armor']);
+          bar[i].sp = info.armor;
 
           //damage barrier
           if (tempdmg >= (bar[i].sp / 2).floor()) {
@@ -113,14 +113,11 @@ class Unit {
     }
 
     void dmgExtra() {
-      var info = {
-        //isHard, armor, health
-        'isHard': hitLocation.isHard, 'armor': hitLocation.curSp,
-        'health': tempdmg //(tempdmg=dmg through armor)
-      };
-      apType.extraEffect(info);
-      armor[location].curSp -= hitLocation.curSp - objtoint(info['armor']);
-      damage += tempdmg - objtoint(info['health']);
+      APInfo info = APInfo(false, hitLocation.isHard, hitLocation.curSp,
+          tempdmg); //(tempdmg=dmg through armor)
+      info = apType.extraEffect(info, this);
+      armor[location].curSp -= hitLocation.curSp - info.armor;
+      damage += tempdmg - info.dmg;
     }
 
     void checkIfCritInjury() {
@@ -211,5 +208,5 @@ class Unit {
     return returnList;
   }
 
-  Unit() {}
+  UnitHealth() {}
 }
