@@ -1,6 +1,5 @@
-import 'dart:js_util';
 import 'dart:math';
-import 'package:dt_tracker_user/data/data_types.dart';
+import 'package:dt_tracker_user/utilities/data/data_types.dart';
 
 void main() {
   for (var i = 0; i < 100; i++) {
@@ -38,7 +37,7 @@ class UnitHealth {
         if (bar[i].locations[o] == location) {
           //extra effect
           APInfo info = APInfo(true, true, bar[i].sp, damage);
-          apType.extraEffect(info, newObject<UnitHealth>());
+          apType.extraEffect(info, UnitHealth());
           damage = info.dmg;
 
           //damage - barrier

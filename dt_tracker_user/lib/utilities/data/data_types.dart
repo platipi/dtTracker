@@ -1,8 +1,6 @@
-import 'dart:ffi';
-import 'dart:js_util';
 import 'dart:math';
 
-import 'package:dt_tracker_user/data/unit_health.dart';
+import 'package:dt_tracker_user/utilities/data/unit_health.dart';
 
 enum UnitType { wildcard, base, mook }
 

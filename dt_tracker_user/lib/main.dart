@@ -1,4 +1,5 @@
-import 'package:dt_tracker_user/mook.dart';
+import 'package:dt_tracker_user/pages/mook.dart';
+import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'utilities/firebase_options.dart';
@@ -28,6 +29,8 @@ class MainState extends StatefulWidget {
 class MainView extends State<MainState> {
   int _selectedIndex = 0;
 
+  Unit example = Unit();
+
   List<NavBarItem> _items = [
     NavBarItem(widget: Icon(Icons.list), name: "Reference"),
     NavBarItem(widget: Icon(Icons.add), name: "Add"),
@@ -37,20 +40,20 @@ class MainView extends State<MainState> {
   ];
 
   List<Widget> _widgetOptions = <Widget>[
-    CustomButton(
-      name: 'Quick Reference',
+    // Mook(
+    //   name: 'Quick Reference',
+    // ),
+    // Mook(
+    //   name: 'New Mook',
+    // ),
+    UnitWidget(
+      unit: Unit(),
     ),
-    CustomButton(
-      name: 'New Mook',
+    UnitWidget(
+      unit: Unit(),
     ),
-    CustomButton(
-      name: 'Mook 0',
-    ),
-    CustomButton(
-      name: 'Mook 1',
-    ),
-    CustomButton(
-      name: 'Mook 2',
+    UnitWidget(
+      unit: Unit(),
     ),
   ];
 
