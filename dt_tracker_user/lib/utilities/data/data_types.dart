@@ -35,4 +35,9 @@ class ArmorLocation {
   int curSp = 0;
   bool isHard = false;
   bool critInjury = false;
+
+  void setSp(int sp) {
+    maxSp = sp;
+    curSp = sp;
+  }
 }

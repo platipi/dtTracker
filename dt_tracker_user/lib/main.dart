@@ -137,7 +137,7 @@ class MainView extends State<MainState> {
                 direction: Axis.vertical,
                 children: [
                   Text("Drag to reorder",
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center),
                   TextButton(onPressed: () {}, child: const Text("DONE"))
                 ],

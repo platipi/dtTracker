@@ -3,6 +3,7 @@ import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
+import 'package:dt_tracker_user/utilities/themes_later.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -128,38 +129,36 @@ class UnitWidget extends State<UnitState> {
                         ),
                       ),
                     )), //name
-                //unit type cycling vvv
+                //side buttons vvv
                 Align(
-                  alignment: const AlignmentDirectional(1, -1),
-                  child: TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.transparent),
-                        iconSize: MaterialStateProperty.all(32),
-                        iconColor: MaterialStateProperty.all(Colors.black),
-                        shape: MaterialStateProperty.all(
-                            const RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: Colors.black,
-                              width: 3.0,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(0),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(0),
-                          ),
-                        ))),
-                    onPressed: () {
-                      cycleUnitType();
-                    },
-                    child: Icon(unit.unitHealth.unitType == UnitType.mook
-                        ? CupertinoIcons.chevron_compact_down
-                        : unit.unitHealth.unitType == UnitType.wildcard
-                            ? CupertinoIcons.chevron_compact_up
-                            : CupertinoIcons.minus),
-                  ),
-                ) //end Unit type cycle
+                    alignment: const AlignmentDirectional(1, -1),
+                    child: Column(
+                      children: [
+                        //unit type cycling vvv
+                        TextButton(
+                          style: customSideButton(),
+                          onPressed: () {
+                            cycleUnitType();
+                          },
+                          child: Icon(unit.unitHealth.unitType == UnitType.mook
+                              ? CupertinoIcons.chevron_compact_down
+                              : unit.unitHealth.unitType == UnitType.wildcard
+                                  ? CupertinoIcons.chevron_compact_up
+                                  : CupertinoIcons.minus),
+                        ),
+                        TextButton(
+                          style: customSideButton(),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return changeSpWidget(10, refreshUnit);
+                                });
+                          },
+                          child: Icon(CupertinoIcons.textformat_123),
+                        ),
+                      ],
+                    )) //end Unit type cycle
               ]),
             ),
             //stats vvv
@@ -188,23 +187,78 @@ class UnitWidget extends State<UnitState> {
         ),
       ),
     );
-  } //end build context
+  }
 
   Widget changeSpWidget(int location, Function refreshParent) {
     String spValue = '';
 
     int validateSp(String value) {
-      if (int.tryParse(spValue) != null) {
-        return int.tryParse(spValue)!;
+      if (location != 10) {
+        if (int.tryParse(spValue) != null) {
+          return int.tryParse(spValue)!;
+        }
+      } else {
+        List<String> inList = spValue.split(',');
+        if (inList.length > 6 || inList.isEmpty) {
+          return -1;
+        }
+        for (var val in inList) {
+          if (int.tryParse(val) == null) {
+            return -1;
+          } else if (int.parse(val) < 0) {
+            return -1;
+          }
+        }
+        return 1;
       }
       return -1;
     }
 
     void setSp(bool updateMax) {
-      if (updateMax) {
-        widget.unit.unitHealth.armor[location].maxSp = validateSp(spValue);
+      if (location == 10) {
+        List<String> inList = spValue.split(',');
+        List<ArmorLocation> armors = widget.unit.unitHealth.armor;
+        if (inList.length == 1) {
+          for (var armor in armors) {
+            armor.setSp(int.parse(inList[0]));
+          }
+        } else if (inList.length == 2) {
+          armors[0].setSp(int.parse(inList[0]));
+          for (var i = 1; i < armors.length; i++) {
+            armors[i].setSp(int.parse(inList[1]));
+          }
+        } else if (inList.length == 3) {
+          armors[0].setSp(int.parse(inList[0]));
+          armors[1].setSp(int.parse(inList[1]));
+          armors[2].setSp(int.parse(inList[1]));
+          armors[3].setSp(int.parse(inList[1]));
+          armors[4].setSp(int.parse(inList[2]));
+          armors[5].setSp(int.parse(inList[2]));
+        } else if (inList.length == 4) {
+          armors[0].setSp(int.parse(inList[0]));
+          armors[1].setSp(int.parse(inList[1]));
+          armors[2].setSp(int.parse(inList[2]));
+          armors[3].setSp(int.parse(inList[2]));
+          armors[4].setSp(int.parse(inList[3]));
+          armors[5].setSp(int.parse(inList[3]));
+        } else if (inList.length == 5) {
+          armors[0].setSp(int.parse(inList[0]));
+          armors[1].setSp(int.parse(inList[1]));
+          armors[2].setSp(int.parse(inList[2]));
+          armors[3].setSp(int.parse(inList[3]));
+          armors[4].setSp(int.parse(inList[4]));
+          armors[5].setSp(int.parse(inList[4]));
+        } else if (inList.length == 6) {
+          for (var i = 0; i < armors.length; i++) {
+            armors[i].setSp(int.parse(inList[i]));
+          }
+        }
+      } else {
+        if (updateMax) {
+          widget.unit.unitHealth.armor[location].maxSp = validateSp(spValue);
+        }
+        widget.unit.unitHealth.armor[location].curSp = validateSp(spValue);
       }
-      widget.unit.unitHealth.armor[location].curSp = validateSp(spValue);
       refreshParent();
       Navigator.pop(context);
     }
@@ -226,7 +280,7 @@ class UnitWidget extends State<UnitState> {
               onPressed: () => Navigator.pop(context, 'Cancel'),
               child: const Text('Cancel'),
             ),
-          if (validateSp(spValue) >= 0)
+          if (location != 10 && validateSp(spValue) >= 0)
             TextButton(
               onPressed: () {
                 setSp(false);

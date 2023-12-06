@@ -48,6 +48,8 @@ String locationToString(int location) {
       return "Left Leg";
     case 5:
       return "Right Leg";
+    case 10:
+      return "All";
     default:
       return "Invalid";
   }
