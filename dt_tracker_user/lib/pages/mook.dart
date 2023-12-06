@@ -1,7 +1,9 @@
 import 'package:dt_tracker_user/pages/widgets/statblock.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
+import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UnitWidget extends StatelessWidget {
@@ -27,6 +29,9 @@ class UnitWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
+    void cycleUnitType() {}
+
     var imgLinks = {
       0: 'assets/unit_head.png',
       1: 'assets/unit_torso.png',
@@ -37,12 +42,12 @@ class UnitWidget extends StatelessWidget {
       -1: 'assets/unit_sp.png'
     };
     var spPos = {
-      0: AlignmentDirectional(0.21, -1.03), //head
-      1: AlignmentDirectional(-0.02, -0.4), //torso
-      2: AlignmentDirectional(-0.35, -0.53), //larm
-      3: AlignmentDirectional(0.35, -0.62), //rarm
-      4: AlignmentDirectional(-0.33, 0.25), //lleg
-      5: AlignmentDirectional(0.35, 0.32), //rleg
+      0: const AlignmentDirectional(0.21, -1.03), //head
+      1: const AlignmentDirectional(-0.02, -0.4), //torso
+      2: const AlignmentDirectional(-0.35, -0.53), //larm
+      3: const AlignmentDirectional(0.35, -0.62), //rarm
+      4: const AlignmentDirectional(-0.33, 0.25), //lleg
+      5: const AlignmentDirectional(0.35, 0.32), //rleg
     };
     return Center(
       child: SizedBox(
@@ -76,7 +81,7 @@ class UnitWidget extends StatelessWidget {
                   );
                 }).toList()), //sp values
                 Align(
-                    alignment: AlignmentDirectional(-0.95, 0.95),
+                    alignment: const AlignmentDirectional(-0.95, 0.95),
                     child: Container(
                       color: Colors.white,
                       child: Text(
@@ -86,7 +91,39 @@ class UnitWidget extends StatelessWidget {
                           fontSize: fontSize * 1.4,
                         ),
                       ),
-                    )) //name
+                    )), //name
+                Align(
+                  alignment: const AlignmentDirectional(1, -1),
+                  child: TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.transparent),
+                        iconSize: MaterialStateProperty.all(32),
+                        iconColor: MaterialStateProperty.all(Colors.black),
+                        shape: MaterialStateProperty.all(
+                            const RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: Colors.black,
+                              width: 3.0,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(0),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(0),
+                          ),
+                        ))),
+                    onPressed: () {
+                      //setState(() {});
+                      cycleUnitType();
+                    },
+                    child: Icon(unit.unitHealth.unitType == UnitType.mook
+                        ? CupertinoIcons.chevron_compact_down
+                        : unit.unitHealth.unitType == UnitType.wildcard
+                            ? CupertinoIcons.chevron_compact_up
+                            : CupertinoIcons.minus),
+                  ),
+                )
               ]),
             ),
             SizedBox(
