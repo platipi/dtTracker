@@ -8,7 +8,7 @@ int objtoint(var obj) {
 }
 
 Color getColorFromDamage(double percent) {
-  if (percent >= 0.9) {
+  if (percent >= 0.8) {
     return Colors.yellow;
   } else if (percent >= 0.6) {
     return Colors.orange;

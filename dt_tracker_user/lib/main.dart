@@ -1,5 +1,10 @@
-import 'package:dt_tracker_user/pages/mook.dart';
+import 'dart:math';
+
+import 'package:dt_tracker_user/pages/add_unit_page.dart';
+import 'package:dt_tracker_user/pages/quick_reference_page.dart';
+import 'package:dt_tracker_user/pages/unit_page.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
+import 'package:dt_tracker_user/utilities/data/unit_health.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,32 +35,30 @@ class MainState extends StatefulWidget {
 class MainView extends State<MainState> {
   int _selectedIndex = 0;
 
-  Unit example = Unit();
-
-  List<NavBarItem> _items = [
-    NavBarItem(widget: Icon(Icons.list), name: "Reference"),
-    NavBarItem(widget: Icon(Icons.add), name: "Add"),
-    NavBarItem(widget: Icon(Icons.person), name: "Mook 0"),
-    NavBarItem(widget: Icon(Icons.person_2), name: "Mook 1"),
-    NavBarItem(widget: Icon(Icons.person_4), name: "Mook 2"),
+  List<Unit> units = [
+    Unit('mook1', UnitHealth()),
+    Unit('mook2', UnitHealth()),
+    Unit('mook3', UnitHealth()),
   ];
 
-  List<Widget> _widgetOptions = <Widget>[
-    // Mook(
-    //   name: 'Quick Reference',
+  List<NavBarItem> items = [
+    NavBarItem(widget: Icon(Icons.list), name: "Reference"),
+    NavBarItem(widget: Icon(Icons.add), name: "Add"),
+    //NavBarItem(widget: Icon(Icons.person), name: "Mook 0"),
+  ];
+
+  List<Widget> navPages = <Widget>[
+    ReferenceWidget(),
+    AddUnitWidget(),
+    // UnitState(
+    //   unit: Unit('mook1', UnitHealth()),
     // ),
-    // Mook(
-    //   name: 'New Mook',
+    // UnitState(
+    //   unit: Unit('mook2', UnitHealth()),
     // ),
-    UnitWidget(
-      unit: Unit(),
-    ),
-    UnitWidget(
-      unit: Unit(),
-    ),
-    UnitWidget(
-      unit: Unit(),
-    ),
+    // UnitState(
+    //   unit: Unit('mook3', UnitHealth()),
+    // ),
   ];
 
   void _onItemTapped(int index) {
@@ -64,11 +67,40 @@ class MainView extends State<MainState> {
     });
   }
 
+  int getPostSwipeIndex(DragEndDetails details) {
+    if (details.primaryVelocity == null) {
+      return _selectedIndex;
+    } else if (details.primaryVelocity! > 0) {
+      return max(0, _selectedIndex - 1);
+    } else if (details.primaryVelocity! < 0) {
+      return min(items.length - 1, _selectedIndex + 1);
+    } else {
+      return _selectedIndex;
+    }
+  }
+
+  @override
+  void initState() {
+    for (var unit in units) {
+      items.add(NavBarItem(widget: Icon(Icons.person), name: unit.name));
+      navPages.add(UnitState(unit: unit));
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+        body: Center(
+            child: GestureDetector(
+                onHorizontalDragEnd: (details) {
+                  _selectedIndex = getPostSwipeIndex(details);
+                  setState(() {});
+                },
+                child: Container(
+                    color: Colors.white,
+                    child: navPages.elementAt(_selectedIndex)))),
         bottomNavigationBar: ScrollableReorderableNavBar(
           onItemTap: (index) {
             setState(() {
@@ -76,24 +108,22 @@ class MainView extends State<MainState> {
             });
           },
           onReorder: (oldIndex, newIndex) {
-            final currItem = _items[_selectedIndex];
+            final currItem = items[_selectedIndex];
             if (oldIndex < newIndex) newIndex -= 1;
-            final newItems = [..._items], item = newItems.removeAt(oldIndex);
+            final newItems = [...items], item = newItems.removeAt(oldIndex);
             newItems.insert(newIndex, item);
 
-            final currWidget = _widgetOptions[_selectedIndex];
-            if (oldIndex < newIndex) newIndex -= 1;
-            final newWidgets = [..._widgetOptions],
+            final newWidgets = [...navPages],
                 widget = newWidgets.removeAt(oldIndex);
             newWidgets.insert(newIndex, widget);
 
             setState(() {
-              _items = newItems;
-              _widgetOptions = newWidgets;
-              _selectedIndex = _items.indexOf(currItem);
+              items = newItems;
+              navPages = newWidgets;
+              _selectedIndex = items.indexOf(currItem);
             });
           },
-          items: _items,
+          items: items,
           selectedIndex: _selectedIndex,
           //onDelete: (index) => setState(() => _items.removeAt(index)),
           onDelete: (i) => (),

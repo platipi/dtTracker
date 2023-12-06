@@ -10,7 +10,14 @@ void main() {
 
 class UnitHealth {
   UnitType unitType = UnitType.base;
-  List<ArmorLocation> armor = List.filled(6, ArmorLocation());
+  List<ArmorLocation> armor = [
+    ArmorLocation(),
+    ArmorLocation(),
+    ArmorLocation(),
+    ArmorLocation(),
+    ArmorLocation(),
+    ArmorLocation(),
+  ];
   List<Barrier> bar = []; //list of bar locations written as [locations]
   int body = 6;
   int damageTaken = 0;

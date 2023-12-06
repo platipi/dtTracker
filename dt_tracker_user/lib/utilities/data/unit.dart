@@ -33,4 +33,6 @@ class Unit {
     returnList['Utility'] = battleStats['Utility']!;
     return returnList;
   }
+
+  Unit(this.name, this.unitHealth);
 }
