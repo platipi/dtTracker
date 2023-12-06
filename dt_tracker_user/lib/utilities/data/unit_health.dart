@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
+import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 
 void main() {
   for (var i = 0; i < 100; i++) {
@@ -8,7 +9,6 @@ void main() {
 }
 
 class UnitHealth {
-  String name = "Unnamed";
   UnitType unitType = UnitType.base;
   List<ArmorLocation> armor = List.filled(6, ArmorLocation());
   List<Barrier> bar = []; //list of bar locations written as [locations]

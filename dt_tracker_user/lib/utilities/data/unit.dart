@@ -1,7 +1,7 @@
 import 'package:dt_tracker_user/utilities/data/unit_health.dart';
 
 class Unit {
-  String name = 'Unamed';
+  String name = 'Unamed Unit';
   UnitHealth unitHealth = UnitHealth();
   var battleStats = {
     'MA': '6',
