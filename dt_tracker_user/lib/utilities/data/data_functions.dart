@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:dt_tracker_user/utilities/data/unit.dart';
+import 'package:dt_tracker_user/utilities/globals.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 int objtoint(var obj) {
@@ -53,4 +56,15 @@ String locationToString(int location) {
     default:
       return "Invalid";
   }
+}
+
+//List<Unit> loadData(data) {}
+
+void updateUser() {
+  fireRef = FirebaseDatabase.instance.ref(curCred.toString());
+
+  fireRef?.onValue.listen((DatabaseEvent event) {
+    final data = event.snapshot.value;
+    //loadData(data);
+  });
 }

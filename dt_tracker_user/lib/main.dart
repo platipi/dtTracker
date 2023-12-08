@@ -1,5 +1,7 @@
 import 'dart:math';
-
+import 'package:dt_tracker_user/utilities/data/data_functions.dart';
+import 'package:dt_tracker_user/utilities/globals.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dt_tracker_user/pages/add_unit_page.dart';
 import 'package:dt_tracker_user/pages/quick_reference_page.dart';
 import 'package:dt_tracker_user/pages/unit_page.dart';
@@ -20,7 +22,12 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseDatabase database = FirebaseDatabase.instance;
+  fireRef = FirebaseDatabase.instance.ref();
+
+  fireRef?.onValue.listen((DatabaseEvent event) {
+    final data = event.snapshot.value;
+    //loadData(data);
+  });
 
   runApp(const MainState());
 }
@@ -101,12 +108,15 @@ class MainView extends State<MainState> {
                 child: Container(
                     color: Colors.white,
                     child: navPages.elementAt(_selectedIndex)))),
+        //Bottom bar vvv
         bottomNavigationBar: ScrollableReorderableNavBar(
+          //on select vvv
           onItemTap: (index) {
             setState(() {
               _selectedIndex = index;
             });
           },
+          //reorder logic vvv
           onReorder: (oldIndex, newIndex) {
             final currItem = items[_selectedIndex];
             if (oldIndex < newIndex) newIndex -= 1;
@@ -125,8 +135,9 @@ class MainView extends State<MainState> {
           },
           items: items,
           selectedIndex: _selectedIndex,
-          //onDelete: (index) => setState(() => _items.removeAt(index)),
+          //old Delete: (index) => setState(() => _items.removeAt(index)),
           onDelete: (i) => (),
+          //re-order widget vvv
           deleteIndicationWidget: Container(
             padding: const EdgeInsets.only(bottom: 100),
             child: Align(

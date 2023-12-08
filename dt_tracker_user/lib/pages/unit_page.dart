@@ -70,7 +70,7 @@ class UnitWidget extends State<UnitState> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             //unit image vvv
