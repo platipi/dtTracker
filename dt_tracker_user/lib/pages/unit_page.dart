@@ -389,6 +389,14 @@ class UnitWidget extends State<UnitState> {
                                           setState(() {
                                             bottomWidget = 'battleStats';
                                           });
+                                        })),
+                                        RectButton('Roll Again', (() {
+                                          setState(() {
+                                            if (!rollDmg) {
+                                              bottomWidget = 'randomShot';
+                                              randomLocation();
+                                            }
+                                          });
                                         }))
                                       ],
                                     ))
