@@ -5,7 +5,7 @@ import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 
 void main() {
   for (var i = 0; i < 100; i++) {
-    print(rollD10());
+    print(rollD10Exploding());
   }
 }
 
@@ -199,14 +199,14 @@ class UnitHealth {
   List<Status> rollStun() {
     List<Status> returnList = List.empty();
     if (!statuses.contains(Status.stun)) {
-      if (rollD10() > body - stunMod()) {
+      if (rollD10Exploding() > body - stunMod()) {
         returnList.add(Status.stun);
       }
     }
     if (statuses.contains(Status.stun) &&
         damageTaken > 15 &&
         !statuses.contains(Status.uncon)) {
-      if (rollD10() > body - unconMod()) {
+      if (rollD10Exploding() > body - unconMod()) {
         returnList.add(Status.uncon);
       }
     }

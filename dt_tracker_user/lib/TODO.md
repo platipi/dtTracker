@@ -1,0 +1,13 @@
+- [ ] small:
+  - [ ] add isHard to change_sp
+  - [ ] add uid to local disk
+  - [ ] add min swipe size to navigation
+- [ ] medium:
+  - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
+- [ ] large:
+  - [ ] add unit
+    - [ ] unit/armor presets
+    - [ ] weapon presets?
+  - [ ] shooting
+    - [ ] single shot
+    - [ ] random shot

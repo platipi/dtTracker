@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
-import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dt_tracker_user/pages/add_unit_page.dart';
@@ -71,7 +69,7 @@ class MainView extends State<MainState> {
     ];
     for (var unit in units) {
       items.add(NavBarItem(widget: Icon(Icons.person), name: unit.name));
-      navPages.add(UnitState(unit: unit));
+      navPages.add(new UnitState(unit: unit));
     }
     setState(() {});
   }

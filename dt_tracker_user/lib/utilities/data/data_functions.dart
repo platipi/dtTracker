@@ -10,6 +10,22 @@ int objtoint(var obj) {
   return int.tryParse(obj.toString())!;
 }
 
+Color? getColor(Unit unit, int location) {
+  if (location < 0 || location > 5) {
+    return null;
+  }
+  if (location == selectedLocationIndex) {
+    return Colors.blue;
+  }
+  int maxSP = unit.unitHealth.armor[location].maxSp;
+  int curSP = unit.unitHealth.armor[location].curSp;
+  if (curSP == maxSP) {
+    return null;
+  } else {
+    return getColorFromDamage(curSP / maxSP);
+  }
+}
+
 Color getColorFromDamage(double percent) {
   if (percent >= 0.8) {
     return Colors.yellow;
@@ -20,7 +36,7 @@ Color getColorFromDamage(double percent) {
   }
 }
 
-int rollD10() {
+int rollD10Exploding() {
   int roll = Random().nextInt(10) + 1;
   int total = roll;
   if (roll == 1) {
@@ -35,6 +51,17 @@ int rollD10() {
     } while (roll == 10);
   }
   return total;
+}
+
+int rollLocation() {
+  int roll = Random().nextInt(10);
+  if (roll > 4) {
+    return 1;
+  } else if (roll == 0) {
+    return 0;
+  } else {
+    return roll + 1;
+  }
 }
 
 String locationToString(int location) {

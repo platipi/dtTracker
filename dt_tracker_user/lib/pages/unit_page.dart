@@ -1,3 +1,5 @@
+import 'package:dt_tracker_user/pages/widgets/change_sp.dart';
+import 'package:dt_tracker_user/pages/widgets/shot_button.dart';
 import 'package:dt_tracker_user/pages/widgets/unit_statblock.dart';
 import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
@@ -18,24 +20,19 @@ class UnitState extends StatefulWidget {
 
 class UnitWidget extends State<UnitState> {
   //const UnitWidget({super.key, required this.unit});
+  String? bottomWidget;
 
-  Color? getColor(int location) {
-    if (location < 0 || location > 5) {
-      return null;
-    }
-    int maxSP = widget.unit.unitHealth.armor[location].maxSp;
-    int curSP = widget.unit.unitHealth.armor[location].curSp;
-    if (curSP == maxSP) {
-      return null;
-    } else {
-      return getColorFromDamage(curSP / maxSP);
-    }
+  @override
+  void initState() {
+    super.initState();
+    selectedLocationIndex = -1;
   }
 
   @override
   Widget build(BuildContext context) {
     final Unit unit = widget.unit;
     double screenWidth = 450;
+    bottomWidget ??= 'battleStats';
 
     void refreshUnit() {
       saveData();
@@ -86,7 +83,7 @@ class UnitWidget extends State<UnitState> {
                   return Image(
                     image: AssetImage(e.value),
                     width: screenWidth,
-                    color: getColor(e.key),
+                    color: getColor(unit, e.key),
                     fit: BoxFit.fitHeight,
                   );
                 }).toList()), //images
@@ -99,7 +96,7 @@ class UnitWidget extends State<UnitState> {
                           onTap: () => showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return changeSpWidget(e.key, refreshUnit);
+                                return changeSpWidget(unit, e.key, refreshUnit);
                               }),
                           child: Container(
                             color: Colors.transparent,
@@ -110,10 +107,10 @@ class UnitWidget extends State<UnitState> {
                                 unit.unitHealth.armor[e.key].curSp.toString(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color:
-                                      e.key == 1 && getColor(1) != Colors.yellow
-                                          ? Colors.white
-                                          : Colors.black,
+                                  color: e.key == 1 &&
+                                          getColor(unit, 1) != Colors.yellow
+                                      ? Colors.white
+                                      : Colors.black,
                                   fontSize: fontSize,
                                 )),
                           )));
@@ -154,7 +151,7 @@ class UnitWidget extends State<UnitState> {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return changeSpWidget(10, refreshUnit);
+                                  return changeSpWidget(unit, 10, refreshUnit);
                                 });
                           },
                           child: Icon(CupertinoIcons.textformat_123),
@@ -163,27 +160,69 @@ class UnitWidget extends State<UnitState> {
                     )) //end Unit type cycle
               ]),
             ),
-            //stats vvv
+            //bottom unit vvv
             Expanded(
               child: SizedBox(
-                height: MediaQuery.sizeOf(context).height * 0.5,
-                width: screenWidth,
-                child: Column(
-                  children: [
-                    Statblock(
-                      stats: unit.getBattleStats(),
-                      bigKey: 'MA',
-                    ),
-                    Statblock(
-                      stats: unit.gunStats,
-                      prefix: 'gun',
-                      bigKey: 'Mod. WA',
-                      bigValue:
-                          '${objtoint(unit.gunStats['gunWA']) + objtoint(unit.battleStats['WS'])}',
-                    ),
-                  ],
-                ),
-              ),
+                  height: MediaQuery.sizeOf(context).height * 0.5,
+                  width: screenWidth,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (bottomWidget == 'battleStats')
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  Statblock(
+                                    stats: widget.unit.getBattleStats(),
+                                    bigKey: 'MA',
+                                  ),
+                                  Statblock(
+                                    stats: widget.unit.gunStats,
+                                    prefix: 'gun',
+                                    bigKey: 'Mod. WA',
+                                    bigValue:
+                                        '${objtoint(widget.unit.gunStats['gunWA']) + objtoint(widget.unit.battleStats['WS'])}',
+                                  ),
+                                ],
+                              ),
+                              Column(children: [
+                                Row(
+                                  children: [
+                                    RectButton('Single Shot', (() {})),
+                                    RectButton('Random Shot(s)', (() {
+                                      setState(() {
+                                        bottomWidget = 'randomShot';
+                                      });
+                                    })),
+                                  ],
+                                )
+                              ]),
+                            ],
+                          ),
+                        ),
+                      if (bottomWidget == 'randomShot')
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  height: 80,
+                                  child: RectButton('Roll Location', (() {
+                                    setState(() {
+                                      randomLocation();
+                                    });
+                                  })))
+                            ],
+                          ),
+                        ),
+                    ],
+                  )),
             ),
           ],
         ),
@@ -191,113 +230,12 @@ class UnitWidget extends State<UnitState> {
     );
   }
 
-  Widget changeSpWidget(int location, Function refreshParent) {
-    String spValue = '';
-
-    int validateSp(String value) {
-      if (location != 10) {
-        if (int.tryParse(spValue) != null) {
-          return int.tryParse(spValue)!;
-        }
-      } else {
-        List<String> inList = spValue.split(',');
-        if (inList.length > 6 || inList.isEmpty) {
-          return -1;
-        }
-        for (var val in inList) {
-          if (int.tryParse(val) == null) {
-            return -1;
-          } else if (int.parse(val) < 0) {
-            return -1;
-          }
-        }
-        return 1;
-      }
-      return -1;
+  void randomLocation() async {
+    for (int i = 0; i < 20; i++) {
+      setState(() {
+        selectedLocationIndex = rollLocation();
+      });
+      await Future.delayed(const Duration(milliseconds: 10));
     }
-
-    void setSp(bool updateMax) {
-      if (location == 10) {
-        List<String> inList = spValue.split(',');
-        List<ArmorLocation> armors = widget.unit.unitHealth.armor;
-        if (inList.length == 1) {
-          for (var armor in armors) {
-            armor.setSp(int.parse(inList[0]));
-          }
-        } else if (inList.length == 2) {
-          armors[0].setSp(int.parse(inList[0]));
-          for (var i = 1; i < armors.length; i++) {
-            armors[i].setSp(int.parse(inList[1]));
-          }
-        } else if (inList.length == 3) {
-          armors[0].setSp(int.parse(inList[0]));
-          armors[1].setSp(int.parse(inList[1]));
-          armors[2].setSp(int.parse(inList[1]));
-          armors[3].setSp(int.parse(inList[1]));
-          armors[4].setSp(int.parse(inList[2]));
-          armors[5].setSp(int.parse(inList[2]));
-        } else if (inList.length == 4) {
-          armors[0].setSp(int.parse(inList[0]));
-          armors[1].setSp(int.parse(inList[1]));
-          armors[2].setSp(int.parse(inList[2]));
-          armors[3].setSp(int.parse(inList[2]));
-          armors[4].setSp(int.parse(inList[3]));
-          armors[5].setSp(int.parse(inList[3]));
-        } else if (inList.length == 5) {
-          armors[0].setSp(int.parse(inList[0]));
-          armors[1].setSp(int.parse(inList[1]));
-          armors[2].setSp(int.parse(inList[2]));
-          armors[3].setSp(int.parse(inList[3]));
-          armors[4].setSp(int.parse(inList[4]));
-          armors[5].setSp(int.parse(inList[4]));
-        } else if (inList.length == 6) {
-          for (var i = 0; i < armors.length; i++) {
-            armors[i].setSp(int.parse(inList[i]));
-          }
-        }
-      } else {
-        if (updateMax) {
-          widget.unit.unitHealth.armor[location].maxSp = validateSp(spValue);
-        }
-        widget.unit.unitHealth.armor[location].curSp = validateSp(spValue);
-      }
-      refreshParent();
-      Navigator.pop(context);
-    }
-
-    return StatefulBuilder(builder: (context, setState) {
-      return AlertDialog(
-        title: Text('Change ${locationToString(location)} SP'),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          TextField(
-            onChanged: (value) {
-              setState(() => spValue = value);
-            },
-          ),
-        ]),
-        actionsAlignment: MainAxisAlignment.start,
-        actions: <Widget>[
-          if (validateSp(spValue) < 0)
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-          if (location != 10 && validateSp(spValue) >= 0)
-            TextButton(
-              onPressed: () {
-                setSp(false);
-              },
-              child: const Text('Set Current'),
-            ),
-          if (validateSp(spValue) >= 0)
-            TextButton(
-              onPressed: () {
-                setSp(true);
-              },
-              child: const Text('Set Max'),
-            ),
-        ],
-      );
-    });
   }
-}//end UnitWidget
+} //end UnitWidget

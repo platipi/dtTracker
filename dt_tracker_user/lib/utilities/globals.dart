@@ -9,6 +9,7 @@ import 'data/unit_health.dart';
 double fontSize = 14;
 UserCredential? curCred;
 DatabaseReference? fireRef;
+int selectedLocationIndex = 1;
 
 List<Unit> units = [
   //Unit.simple('mook1', UnitHealth.empty()),
