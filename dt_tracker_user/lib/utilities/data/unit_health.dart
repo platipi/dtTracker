@@ -22,8 +22,8 @@ class UnitHealth {
     ArmorLocation.blank(),
     ArmorLocation.blank()
   ];
-  List<Barrier> bar = []; //list of bar locations
-  List<Status> statuses = [];
+  List<Barrier> bar = List.empty(growable: true); //list of bar locations
+  List<Status> statuses = List.empty(growable: true);
 
   int btm() {
     if (body > 10) {
@@ -58,7 +58,7 @@ class UnitHealth {
           //damage barrier
           if (tempdmg >= (bar[i].sp / 2).floor()) {
             returnList.add("Barrier Damaged #: ${i + 1}");
-            bar[i].sp--;
+            bar[i].sp = max(bar[i].sp - 1, 0);
           } //end if barrier damage
 
           //if no damage left
@@ -82,7 +82,7 @@ class UnitHealth {
 
     //armor degredation
     if (tempdmg >= (hitLocation.curSp / 2).floor()) {
-      armor[location].curSp--;
+      armor[location].curSp = max(armor[location].curSp - 1, 0);
       returnList.add("Armor degraded to ${armor[location].curSp}");
     }
 
@@ -121,9 +121,9 @@ class UnitHealth {
     }
 
     void dmgExtra() {
-      APInfo info = APInfo(false, hitLocation.isHard, hitLocation.curSp,
+      var info = APInfo(false, hitLocation.isHard, hitLocation.curSp,
           tempdmg); //(tempdmg=dmg through armor)
-      info = apType.extraEffect(info, this);
+      apType.extraEffect(info, this);
       armor[location].curSp -= hitLocation.curSp - info.armor;
       damage += tempdmg - info.dmg;
     }
@@ -137,11 +137,18 @@ class UnitHealth {
             statuses.add(Status.dead);
             returnList.add("Headshot Insta-Kill!!!");
           }
+        } else if (location == 0) {
+          returnList.add('No Critical Injury');
         }
       } else if (damage >= 15) {
         armor[location].critInjury = 'true';
         returnList.add("Critical Injury to ${locationToString(location)}");
       }
+    }
+
+    if (tempdmg <= 0) {
+      dmgExtra();
+      return returnList;
     }
 
     //calcuate damage in correct order
@@ -173,12 +180,21 @@ class UnitHealth {
 
     if (damage > 0) {
       returnList.add("${damage} through to ${locationToString(location)}");
+      damageTaken += damage;
       var stunUncon = rollStun();
       if (stunUncon.contains(Status.stun)) {
-        returnList.add("Stunned!");
+        if (statuses.contains(Status.stun)) {
+          returnList.add("Already Stunned!");
+        } else {
+          returnList.add("Stunned!");
+        }
       }
       if (stunUncon.contains(Status.uncon)) {
-        returnList.add("Unconscious!!");
+        if (statuses.contains(Status.uncon)) {
+          returnList.add("Already Unconscious!!");
+        } else {
+          returnList.add("Unconscious!!");
+        }
       }
       if (stunUncon.contains(Status.dead)) {
         returnList.add("Dealt more than 50 dmg?!?!? OwO");
@@ -197,7 +213,7 @@ class UnitHealth {
   }
 
   List<Status> rollStun() {
-    List<Status> returnList = List.empty();
+    List<Status> returnList = List.empty(growable: true);
     if (!statuses.contains(Status.stun)) {
       if (rollD10Exploding() > body - stunMod()) {
         returnList.add(Status.stun);

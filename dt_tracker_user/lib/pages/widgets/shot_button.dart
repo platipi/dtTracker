@@ -6,7 +6,7 @@ Widget RectButton(String text, Function onPressed) {
       child: Container(
           width: double.infinity,
           height: 80,
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(3),
           child: TextButton(
             style: ButtonStyle(
               shape: MaterialStateProperty.all(const RoundedRectangleBorder(

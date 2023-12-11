@@ -10,8 +10,10 @@ class APType {
   double softDmgMod = 1;
   double hardArmorMod = 1;
   double hardDmgMod = 1;
-  Function extraEffect = (APInfo info, UnitHealth unit) =>
-      (); //return APInfo, do inheritance crap on unit
+  Function extraEffect = ((APInfo info, UnitHealth unit) {
+    print('extra effect');
+  }); //return APInfo, do inheritance crap on unit
+  APType.Normal();
 }
 
 class APInfo {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dt_tracker_user/pages/widgets/change_sp.dart';
 import 'package:dt_tracker_user/pages/widgets/shot_button.dart';
 import 'package:dt_tracker_user/pages/widgets/unit_statblock.dart';
@@ -20,7 +22,13 @@ class UnitState extends StatefulWidget {
 
 class UnitWidget extends State<UnitState> {
   //const UnitWidget({super.key, required this.unit});
-  String? bottomWidget;
+  String bottomWidget = 'battleStats';
+  int numOfDmg = 0;
+  int bonusDmg = 0;
+  int dieType = 6;
+  bool rollDmg = false;
+  late Function refreshUnit;
+  List<String> report = [];
 
   @override
   void initState() {
@@ -30,14 +38,13 @@ class UnitWidget extends State<UnitState> {
 
   @override
   Widget build(BuildContext context) {
-    final Unit unit = widget.unit;
+    Unit unit = widget.unit;
     double screenWidth = 450;
-    bottomWidget ??= 'battleStats';
 
-    void refreshUnit() {
+    refreshUnit = () {
       saveData();
       setState(() {});
-    }
+    };
 
     void cycleUnitType() {
       var curUnitIndex = unit.unitHealth.unitType.index;
@@ -209,18 +216,184 @@ class UnitWidget extends State<UnitState> {
                         Expanded(
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Container(
                                   height: 80,
-                                  child: RectButton('Roll Location', (() {
-                                    setState(() {
-                                      randomLocation();
-                                    });
-                                  })))
+                                  child: Row(children: [
+                                    RectButton('Roll Location', (() {
+                                      setState(() {
+                                        randomLocation();
+                                      });
+                                    }))
+                                  ])),
+                              if (!rollDmg)
+                                Row(
+                                  children: [
+                                    RectButton('0', (() {
+                                      setState(() {
+                                        numOfDmg = 0;
+                                      });
+                                    })),
+                                    RectButton('--', (() {
+                                      setState(() {
+                                        numOfDmg = max(numOfDmg! - 5, 0);
+                                      });
+                                    })),
+                                    RectButton('-', (() {
+                                      setState(() {
+                                        numOfDmg = max(numOfDmg! - 1, 0);
+                                      });
+                                    })),
+                                    TextButton(
+                                        style: TextButton.styleFrom(
+                                            padding: EdgeInsets.all(0),
+                                            minimumSize: Size(30, 30)),
+                                        onPressed: (() {
+                                          //hard enter value
+                                        }),
+                                        child: Text(
+                                          '${numOfDmg}',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: fontSize * 1.25),
+                                        )),
+                                    RectButton('+', (() {
+                                      setState(() {
+                                        numOfDmg = numOfDmg! + 1;
+                                      });
+                                    })),
+                                    RectButton('++', (() {
+                                      setState(() {
+                                        numOfDmg = numOfDmg! + 5;
+                                      });
+                                    })),
+                                    RectButton('R', (() {
+                                      setState(() {
+                                        numOfDmg = 1;
+                                        rollDmg = true;
+                                      });
+                                    })),
+                                  ],
+                                ),
+                              if (rollDmg)
+                                Column(children: [
+                                  Row(
+                                    children: [
+                                      RectButton('1', (() {
+                                        setState(() {
+                                          numOfDmg = 1;
+                                        });
+                                      })),
+                                      RectButton('-', (() {
+                                        setState(() {
+                                          numOfDmg = max(numOfDmg! - 1, 1);
+                                        });
+                                      })),
+                                      TextButton(
+                                          onPressed: (() {
+                                            if (dieType == 6) {
+                                              setState(() {
+                                                dieType = 10;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                dieType = 6;
+                                              });
+                                            }
+                                          }),
+                                          child: Text(
+                                            '${numOfDmg}D${dieType}',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: fontSize * 1.25),
+                                          )),
+                                      RectButton('+', (() {
+                                        setState(() {
+                                          numOfDmg = numOfDmg! + 1;
+                                        });
+                                      })),
+                                      RectButton('D', (() {
+                                        setState(() {
+                                          numOfDmg = 0;
+                                          rollDmg = false;
+                                        });
+                                      })),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      RectButton('-', (() {
+                                        setState(() {
+                                          bonusDmg = max(bonusDmg! - 1, 0);
+                                        });
+                                      })),
+                                      TextButton(
+                                          onPressed: (() {
+                                            if (dieType == 6) {
+                                              setState(() {
+                                                dieType = 10;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                dieType = 6;
+                                              });
+                                            }
+                                          }),
+                                          child: Text(
+                                            '+${bonusDmg}',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: fontSize * 1.25),
+                                          )),
+                                      RectButton('+', (() {
+                                        setState(() {
+                                          bonusDmg = bonusDmg! + 1;
+                                        });
+                                      })),
+                                    ],
+                                  ),
+                                ]),
+                              Container(
+                                  height: 80,
+                                  child: Row(children: [
+                                    RectButton('Deal Damage', (() {
+                                      setState(() {
+                                        report = unit.unitHealth.dealDamage(
+                                            numOfDmg,
+                                            selectedLocationIndex,
+                                            APType.Normal());
+                                      });
+                                      refreshUnit();
+                                      bottomWidget = 'afterActionReport';
+                                    }))
+                                  ])),
                             ],
                           ),
                         ),
+                      if (bottomWidget == 'afterActionReport')
+                        Expanded(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: report.map((e) {
+                                    return Text(e);
+                                  }).toList(),
+                                ),
+                                Container(
+                                    height: 80,
+                                    child: Row(
+                                      children: [
+                                        RectButton('Back', (() {
+                                          setState(() {
+                                            bottomWidget = 'battleStats';
+                                          });
+                                        }))
+                                      ],
+                                    ))
+                              ]),
+                        )
                     ],
                   )),
             ),
@@ -228,6 +401,17 @@ class UnitWidget extends State<UnitState> {
         ),
       ),
     );
+  }
+
+  Future<void> dealDamage() async {
+    if (rollDmg == false) {
+      print('da dmg' +
+          widget.unit.unitHealth
+              .dealDamage(numOfDmg, selectedLocationIndex, APType.Normal())
+              .toString());
+    }
+    await Future.delayed(const Duration(milliseconds: 10));
+    await refreshUnit();
   }
 
   void randomLocation() async {

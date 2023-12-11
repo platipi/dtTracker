@@ -2,8 +2,12 @@
   - [ ] add isHard to change_sp
   - [ ] add uid to local disk
   - [ ] add min swipe size to navigation
+  - [ ] edit name on click
+  - [ ] wrong password prompts for new account
 - [ ] medium:
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
+  - [ ]  health display and editing
+  - [ ]  stun/uncon display and editing
 - [ ] large:
   - [ ] add unit
     - [ ] unit/armor presets
@@ -11,3 +15,7 @@
   - [ ] shooting
     - [ ] single shot
     - [ ] random shot
+      - [x] 1 shot
+      - [ ] multiple with dice roll
+      - [ ] cleanup selection menu (add ap)
+      - [ ] cleanup report
