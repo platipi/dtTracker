@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
@@ -10,17 +11,18 @@ void main() {
 
 class UnitHealth {
   UnitType unitType = UnitType.base;
-  List<ArmorLocation> armor = [
-    ArmorLocation(),
-    ArmorLocation(),
-    ArmorLocation(),
-    ArmorLocation(),
-    ArmorLocation(),
-    ArmorLocation(),
-  ];
-  List<Barrier> bar = []; //list of bar locations written as [locations]
   int body = 6;
   int damageTaken = 0;
+
+  List<ArmorLocation> armor = [
+    ArmorLocation.blank(),
+    ArmorLocation.blank(),
+    ArmorLocation.blank(),
+    ArmorLocation.blank(),
+    ArmorLocation.blank(),
+    ArmorLocation.blank()
+  ];
+  List<Barrier> bar = []; //list of bar locations
   List<Status> statuses = [];
 
   int btm() {
@@ -44,7 +46,7 @@ class UnitHealth {
         if (bar[i].locations[o] == location) {
           //extra effect
           APInfo info = APInfo(true, true, bar[i].sp, damage);
-          apType.extraEffect(info, UnitHealth());
+          apType.extraEffect(info, this);
           damage = info.dmg;
 
           //damage - barrier
@@ -129,7 +131,7 @@ class UnitHealth {
     void checkIfCritInjury() {
       if (location != 1) {
         if (damage >= 8) {
-          armor[location].critInjury = true;
+          armor[location].critInjury = 'true';
           returnList.add("Critical Injury to ${locationToString(location)}");
           if (location == 0) {
             statuses.add(Status.dead);
@@ -137,7 +139,7 @@ class UnitHealth {
           }
         }
       } else if (damage >= 15) {
-        armor[location].critInjury = true;
+        armor[location].critInjury = 'true';
         returnList.add("Critical Injury to ${locationToString(location)}");
       }
     }
@@ -214,5 +216,42 @@ class UnitHealth {
     return returnList;
   }
 
-  UnitHealth() {}
+  UnitHealth.empty() {}
+
+  Map toJson() {
+    List<Map> armor = this.armor.map((i) => i.toJson()).toList();
+    List<Map>? bar = this.bar.map((i) => i.toJson()).toList();
+    List<int>? statuses = this.statuses.map((i) => i.index).toList();
+
+    return {
+      'unitType': unitType.index,
+      'body': body,
+      'damageTaken': damageTaken,
+      'armor': armor,
+      'bar': bar,
+      'statuses': statuses
+    };
+  }
+
+  UnitHealth(this.unitType, this.body, this.damageTaken, this.armor, this.bar,
+      this.statuses);
+
+  factory UnitHealth.fromJson(dynamic json) {
+    var tempJson = json['armor'] as List;
+    List<ArmorLocation> armor =
+        tempJson.map((itemJson) => ArmorLocation.fromJson(itemJson)).toList();
+    tempJson = json['bar'] as List;
+    List<Barrier> bar =
+        tempJson.map((itemJson) => Barrier.fromJson(itemJson)).toList();
+
+    List<Status> statuses = [];
+    if (json['statuses'] != null) {
+      tempJson = json['statuses'];
+      List<Status> statuses =
+          tempJson.map((itemJson) => Status.values[itemJson]).toList();
+    }
+
+    return UnitHealth(UnitType.values[json['unitType'] as int],
+        json['body'] as int, json['damageTaken'] as int, armor, bar, statuses);
+  }
 }

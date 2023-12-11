@@ -1,14 +1,17 @@
+import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginState extends StatefulWidget {
-  const LoginState({
+  Function refreshParent;
+  LoginState(
+    this.refreshParent, {
     Key? key,
   }) : super(key: key);
 
   @override
-  State<LoginState> createState() => LoginWidget();
+  State<LoginState> createState() => LoginWidget(refreshParent);
 }
 
 class LoginWidget extends State<LoginState> {
@@ -16,6 +19,9 @@ class LoginWidget extends State<LoginState> {
   String emailAddress = '';
   String password = '';
   bool register = false;
+  Function refreshParent;
+
+  LoginWidget(this.refreshParent);
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +96,14 @@ class LoginWidget extends State<LoginState> {
                                         email: emailAddress,
                                         password: password);
                                 feedback = 'Logged In!';
+                                updateUser(refreshParent);
                                 Navigator.pop(context);
                               } else {
                                 curCred = await FirebaseAuth.instance
                                     .createUserWithEmailAndPassword(
-                                  email: emailAddress,
-                                  password: password,
-                                );
+                                        email: emailAddress,
+                                        password: password);
+                                updateUser(refreshParent);
                                 feedback = 'Created Account!';
                                 Navigator.pop(context);
                               }

@@ -2,7 +2,7 @@ import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:flutter/material.dart';
 
 class Statblock extends StatelessWidget {
-  final Map<String, String> stats;
+  final Map<String, dynamic> stats;
   final String? prefix;
   final String? bigKey;
   String? bigValue;

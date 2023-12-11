@@ -60,11 +60,4 @@ String locationToString(int location) {
 
 //List<Unit> loadData(data) {}
 
-void updateUser() {
-  fireRef = FirebaseDatabase.instance.ref(curCred.toString());
 
-  fireRef?.onValue.listen((DatabaseEvent event) {
-    final data = event.snapshot.value;
-    //loadData(data);
-  });
-}

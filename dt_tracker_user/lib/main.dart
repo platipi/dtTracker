@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,11 +25,6 @@ Future<void> main() async {
   );
   fireRef = FirebaseDatabase.instance.ref();
 
-  fireRef?.onValue.listen((DatabaseEvent event) {
-    final data = event.snapshot.value;
-    //loadData(data);
-  });
-
   runApp(const MainState());
 }
 
@@ -42,31 +38,9 @@ class MainState extends StatefulWidget {
 class MainView extends State<MainState> {
   int _selectedIndex = 0;
 
-  List<Unit> units = [
-    Unit('mook1', UnitHealth()),
-    Unit('mook2', UnitHealth()),
-    Unit('mook3', UnitHealth()),
-  ];
+  List<NavBarItem> items = [];
 
-  List<NavBarItem> items = [
-    NavBarItem(widget: Icon(Icons.list), name: "Reference"),
-    NavBarItem(widget: Icon(Icons.add), name: "Add"),
-    //NavBarItem(widget: Icon(Icons.person), name: "Mook 0"),
-  ];
-
-  List<Widget> navPages = <Widget>[
-    ReferenceWidget(),
-    AddUnitWidget(),
-    // UnitState(
-    //   unit: Unit('mook1', UnitHealth()),
-    // ),
-    // UnitState(
-    //   unit: Unit('mook2', UnitHealth()),
-    // ),
-    // UnitState(
-    //   unit: Unit('mook3', UnitHealth()),
-    // ),
-  ];
+  List<Widget> navPages = <Widget>[];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -86,12 +60,25 @@ class MainView extends State<MainState> {
     }
   }
 
-  @override
-  void initState() {
+  void refreshNavbar() {
+    items = [
+      NavBarItem(widget: Icon(Icons.list), name: "Reference"),
+      NavBarItem(widget: Icon(Icons.add), name: "Add"),
+    ];
+    navPages = <Widget>[
+      ReferenceWidget(refreshNavbar),
+      AddUnitWidget(),
+    ];
     for (var unit in units) {
       items.add(NavBarItem(widget: Icon(Icons.person), name: unit.name));
       navPages.add(UnitState(unit: unit));
     }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    refreshNavbar();
     super.initState();
   }
 

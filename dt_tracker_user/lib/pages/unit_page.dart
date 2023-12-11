@@ -1,4 +1,5 @@
 import 'package:dt_tracker_user/pages/widgets/unit_statblock.dart';
+import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
@@ -37,6 +38,7 @@ class UnitWidget extends State<UnitState> {
     double screenWidth = 450;
 
     void refreshUnit() {
+      saveData();
       setState(() {});
     }
 
