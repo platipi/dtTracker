@@ -303,20 +303,24 @@ class UnitWidget extends State<UnitState> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                children: [
-                                  Statblock(
-                                    stats: widget.unit.getBattleStats(),
-                                    bigKey: 'MA',
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Statblock(
+                                        stats: widget.unit.getBattleStats(),
+                                        bigKey: 'MA',
+                                      ),
+                                      Statblock(
+                                        stats: widget.unit.gunStats,
+                                        prefix: 'gun',
+                                        bigKey: 'Mod. WA',
+                                        bigValue:
+                                            '${objtoint(widget.unit.gunStats['gunWA']) + objtoint(widget.unit.battleStats['WS'])}',
+                                      ),
+                                    ],
                                   ),
-                                  Statblock(
-                                    stats: widget.unit.gunStats,
-                                    prefix: 'gun',
-                                    bigKey: 'Mod. WA',
-                                    bigValue:
-                                        '${objtoint(widget.unit.gunStats['gunWA']) + objtoint(widget.unit.battleStats['WS'])}',
-                                  ),
-                                ],
+                                ),
                               ),
                               Column(children: [
                                 Row(
