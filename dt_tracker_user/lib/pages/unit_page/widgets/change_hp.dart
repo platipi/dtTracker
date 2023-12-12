@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:dt_tracker_user/pages/widgets/shot_button.dart';
+import 'package:dt_tracker_user/pages/widgets/rect_button.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 Widget changeHpWidget(Unit unit, Function refreshParent) {
   String hpInput = '';
   int hpValue = unit.unitHealth.damageTaken;
-  double smallButtonHeight = 50;
 
   int validateHp() {
     int? val = int.tryParse(hpInput);
@@ -33,17 +32,17 @@ Widget changeHpWidget(Unit unit, Function refreshParent) {
         // ),
         Row(
           children: [
-            RectButton('0', (() {
+            ExpandedRectButton('0', (() {
               setState(() {
                 hpValue = 0;
               });
             }), smallButtonHeight),
-            RectButton('v', (() {
+            ExpandedRectButton('v', (() {
               setState(() {
                 hpValue = max(hpValue - 5, 0);
               });
             }), smallButtonHeight),
-            RectButton('-', (() {
+            ExpandedRectButton('-', (() {
               setState(() {
                 hpValue = max(hpValue - 1, 0);
               });
@@ -60,17 +59,17 @@ Widget changeHpWidget(Unit unit, Function refreshParent) {
               style: TextStyle(color: Colors.black, fontSize: fontSize * 1.25),
             ),
             //),
-            RectButton('+', (() {
+            ExpandedRectButton('+', (() {
               setState(() {
                 hpValue = min(hpValue + 1, 50);
               });
             }), smallButtonHeight),
-            RectButton('^', (() {
+            ExpandedRectButton('^', (() {
               setState(() {
                 hpValue = min(hpValue + 5, 50);
               });
             }), smallButtonHeight),
-            RectButton('D', (() {
+            ExpandedRectButton('D', (() {
               setState(() {
                 hpValue = 50;
               });

@@ -3,7 +3,8 @@ import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:flutter/material.dart';
 
-Widget changeSpWidget(Unit unit, int location, Function refreshParent) {
+Widget changeSpWidget(
+    List<ArmorLocation> armor, int location, Function refreshParent) {
   String spValue = '';
 
   int validateSp(String value) {
@@ -31,7 +32,7 @@ Widget changeSpWidget(Unit unit, int location, Function refreshParent) {
   void setSp(bool updateMax) {
     if (location == 10) {
       List<String> inList = spValue.split(',');
-      List<ArmorLocation> armors = unit.unitHealth.armor;
+      List<ArmorLocation> armors = armor;
       if (inList.length == 1) {
         for (var armor in armors) {
           armor.setSp(int.parse(inList[0]));
@@ -69,9 +70,9 @@ Widget changeSpWidget(Unit unit, int location, Function refreshParent) {
       }
     } else {
       if (updateMax) {
-        unit.unitHealth.armor[location].maxSp = validateSp(spValue);
+        armor[location].maxSp = validateSp(spValue);
       }
-      unit.unitHealth.armor[location].curSp = validateSp(spValue);
+      armor[location].curSp = validateSp(spValue);
     }
     refreshParent();
   }

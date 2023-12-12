@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:dt_tracker_user/pages/widgets/change_hp.dart';
-import 'package:dt_tracker_user/pages/widgets/change_sp.dart';
-import 'package:dt_tracker_user/pages/widgets/shot_button.dart';
-import 'package:dt_tracker_user/pages/widgets/unit_statblock.dart';
+import 'package:dt_tracker_user/pages/unit_page/widgets/change_hp.dart';
+import 'package:dt_tracker_user/pages/unit_page/widgets/change_sp.dart';
+import 'package:dt_tracker_user/pages/widgets/rect_button.dart';
+import 'package:dt_tracker_user/pages/unit_page/widgets/unit_statblock.dart';
 import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
@@ -51,8 +51,6 @@ class UnitWidget extends State<UnitState> {
   Widget build(BuildContext context) {
     Unit unit = widget.unit;
     double screenWidth = 450;
-    double bigButtonHeight = 80;
-    double smallButtonHeight = 50;
 
     refreshUnit = () {
       saveData();
@@ -116,7 +114,8 @@ class UnitWidget extends State<UnitState> {
                           onTap: () => showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return changeSpWidget(unit, e.key, refreshUnit);
+                                return changeSpWidget(
+                                    unit.unitHealth.armor, e.key, refreshUnit);
                               }),
                           child: Container(
                             color: Colors.transparent,
@@ -171,7 +170,8 @@ class UnitWidget extends State<UnitState> {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return changeSpWidget(unit, 10, refreshUnit);
+                                  return changeSpWidget(
+                                      unit.unitHealth.armor, 10, refreshUnit);
                                 });
                           },
                           child: Icon(CupertinoIcons.textformat_123),
@@ -321,9 +321,9 @@ class UnitWidget extends State<UnitState> {
                               Column(children: [
                                 Row(
                                   children: [
-                                    RectButton('Single Shot', (() {}),
+                                    ExpandedRectButton('Single Shot', (() {}),
                                         bigButtonHeight),
-                                    RectButton('Random Shot(s)', (() {
+                                    ExpandedRectButton('Random Shot(s)', (() {
                                       setState(() {
                                         bottomWidget = 'randomShot';
                                       });
@@ -341,7 +341,7 @@ class UnitWidget extends State<UnitState> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Row(children: [
-                                RectButton('Roll Location', (() {
+                                ExpandedRectButton('Roll Location', (() {
                                   setState(() {
                                     randomLocation();
                                   });
@@ -350,7 +350,7 @@ class UnitWidget extends State<UnitState> {
                               if (!rollDmg)
                                 Row(
                                   children: [
-                                    RectButton(
+                                    ExpandedRectButton(
                                         '0',
                                         selectedLocationIndex == -1
                                             ? null
@@ -360,7 +360,7 @@ class UnitWidget extends State<UnitState> {
                                                 });
                                               }),
                                         smallButtonHeight),
-                                    RectButton(
+                                    ExpandedRectButton(
                                         '--',
                                         selectedLocationIndex == -1
                                             ? null
@@ -371,7 +371,7 @@ class UnitWidget extends State<UnitState> {
                                                 });
                                               }),
                                         smallButtonHeight),
-                                    RectButton(
+                                    ExpandedRectButton(
                                         '-',
                                         selectedLocationIndex == -1
                                             ? null
@@ -395,7 +395,7 @@ class UnitWidget extends State<UnitState> {
                                               color: Colors.black,
                                               fontSize: fontSize * 1.25),
                                         )),
-                                    RectButton(
+                                    ExpandedRectButton(
                                         '+',
                                         selectedLocationIndex == -1
                                             ? null
@@ -405,7 +405,7 @@ class UnitWidget extends State<UnitState> {
                                                 });
                                               }),
                                         smallButtonHeight),
-                                    RectButton(
+                                    ExpandedRectButton(
                                         '++',
                                         selectedLocationIndex == -1
                                             ? null
@@ -415,7 +415,7 @@ class UnitWidget extends State<UnitState> {
                                                 });
                                               }),
                                         smallButtonHeight),
-                                    RectButton(
+                                    ExpandedRectButton(
                                         'R',
                                         selectedLocationIndex == -1
                                             ? null
@@ -432,7 +432,7 @@ class UnitWidget extends State<UnitState> {
                                 Column(children: [
                                   Row(
                                     children: [
-                                      RectButton(
+                                      ExpandedRectButton(
                                           '1',
                                           selectedLocationIndex == -1
                                               ? null
@@ -442,7 +442,7 @@ class UnitWidget extends State<UnitState> {
                                                   });
                                                 }),
                                           smallButtonHeight),
-                                      RectButton(
+                                      ExpandedRectButton(
                                           '-',
                                           selectedLocationIndex == -1
                                               ? null
@@ -471,7 +471,7 @@ class UnitWidget extends State<UnitState> {
                                                 color: Colors.black,
                                                 fontSize: fontSize * 1.25),
                                           )),
-                                      RectButton(
+                                      ExpandedRectButton(
                                           '+',
                                           selectedLocationIndex == -1
                                               ? null
@@ -481,7 +481,7 @@ class UnitWidget extends State<UnitState> {
                                                   });
                                                 }),
                                           smallButtonHeight),
-                                      RectButton(
+                                      ExpandedRectButton(
                                           'D',
                                           selectedLocationIndex == -1
                                               ? null
@@ -496,7 +496,7 @@ class UnitWidget extends State<UnitState> {
                                   ),
                                   Row(
                                     children: [
-                                      RectButton(
+                                      ExpandedRectButton(
                                           '-',
                                           selectedLocationIndex == -1
                                               ? null
@@ -525,7 +525,7 @@ class UnitWidget extends State<UnitState> {
                                                 color: Colors.black,
                                                 fontSize: fontSize * 1.25),
                                           )),
-                                      RectButton(
+                                      ExpandedRectButton(
                                           '+',
                                           selectedLocationIndex == -1
                                               ? null
@@ -540,7 +540,7 @@ class UnitWidget extends State<UnitState> {
                                 ]),
                               Container(
                                   child: Row(children: [
-                                RectButton(
+                                ExpandedRectButton(
                                     'Deal Damage',
                                     numOfDmg == 0 || selectedLocationIndex == -1
                                         ? null
@@ -570,13 +570,13 @@ class UnitWidget extends State<UnitState> {
                                     height: bigButtonHeight,
                                     child: Row(
                                       children: [
-                                        RectButton('Back', (() {
+                                        ExpandedRectButton('Back', (() {
                                           setState(() {
                                             resetData();
                                             bottomWidget = 'battleStats';
                                           });
                                         }), bigButtonHeight),
-                                        RectButton('Roll Again', (() {
+                                        ExpandedRectButton('Roll Again', (() {
                                           setState(() {
                                             bottomWidget = 'randomShot';
                                             randomLocation();

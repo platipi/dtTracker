@@ -1,3 +1,4 @@
+import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/unit_health.dart';
 
 class Unit {

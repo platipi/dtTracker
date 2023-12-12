@@ -8,6 +8,7 @@
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
   - [x]  health display and editing
   - [x]  stun/uncon display and editing
+  - [ ]  unit_page cleanup
   - [ ]  health/stun cleanup
   - [ ]  refresh unit button (armor,health,statuses)
 - [ ] large:

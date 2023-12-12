@@ -5,6 +5,7 @@ import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 int objtoint(var obj) {
   return int.tryParse(obj.toString())!;
@@ -85,6 +86,16 @@ String locationToString(int location) {
     default:
       return "Invalid";
   }
+}
+
+Future<String> RandomName() async {
+  String nameList = await _getFileData('assets/first_names.txt');
+  List<String> names = nameList.split('\n');
+  return names[Random().nextInt(names.length)];
+}
+
+Future<String> _getFileData(String path) async {
+  return await rootBundle.loadString(path);
 }
 
 //List<Unit> loadData(data) {}

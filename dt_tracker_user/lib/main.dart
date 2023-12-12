@@ -3,7 +3,7 @@ import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dt_tracker_user/pages/add_unit_page.dart';
 import 'package:dt_tracker_user/pages/quick_reference_page.dart';
-import 'package:dt_tracker_user/pages/unit_page.dart';
+import 'package:dt_tracker_user/pages/unit_page/unit_page.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:dt_tracker_user/utilities/data/unit_health.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +65,7 @@ class MainView extends State<MainState> {
     ];
     navPages = <Widget>[
       ReferenceWidget(refreshNavbar),
-      AddUnitWidget(),
+      AddUnitState(),
     ];
     for (var unit in units) {
       items.add(NavBarItem(widget: Icon(Icons.person), name: unit.name));

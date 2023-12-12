@@ -10,6 +10,10 @@ double fontSize = 14;
 UserCredential? curCred;
 DatabaseReference? fireRef;
 int selectedLocationIndex = 1;
+double smallButtonHeight = 50;
+double bigButtonHeight = 80;
+
+List<String> names = [];
 
 List<Unit> units = [
   //Unit.simple('mook1', UnitHealth.empty()),
