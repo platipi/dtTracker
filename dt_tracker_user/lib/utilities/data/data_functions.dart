@@ -26,8 +26,10 @@ Color? getColor(Unit unit, int location) {
   }
 }
 
-Color getColorFromDamage(double percent) {
-  if (percent >= 0.8) {
+Color? getColorFromDamage(double percent) {
+  if (percent >= 0.9) {
+    return null;
+  } else if (percent >= 0.8) {
     return Colors.yellow;
   } else if (percent >= 0.6) {
     return Colors.orange;

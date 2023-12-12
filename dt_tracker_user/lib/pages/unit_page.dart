@@ -189,6 +189,8 @@ class UnitWidget extends State<UnitState> {
                           }),
                       child: Container(
                           color: Colors.transparent,
+                          width: 40,
+                          height: MediaQuery.sizeOf(context).height * 0.28,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -556,7 +558,8 @@ class UnitWidget extends State<UnitState> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                    height: 330,
+                                    height: MediaQuery.sizeOf(context).height *
+                                        0.43,
                                     child: SingleChildScrollView(
                                         child: Column(
                                       children: report.map((e) {

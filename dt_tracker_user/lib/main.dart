@@ -85,14 +85,15 @@ class MainView extends State<MainState> {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-            child: GestureDetector(
-                onHorizontalDragEnd: (details) {
-                  _selectedIndex = getPostSwipeIndex(details);
-                  setState(() {});
-                },
-                child: Container(
-                    color: Colors.white,
-                    child: navPages.elementAt(_selectedIndex)))),
+          child: GestureDetector(
+              onHorizontalDragEnd: (details) {
+                _selectedIndex = getPostSwipeIndex(details);
+                setState(() {});
+              },
+              child: Container(
+                  color: Colors.white,
+                  child: navPages.elementAt(_selectedIndex))),
+        ),
         //Bottom bar vvv
         bottomNavigationBar: ScrollableReorderableNavBar(
           //on select vvv
