@@ -6,8 +6,10 @@
   - [ ] wrong password prompts for new account
 - [ ] medium:
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
-  - [ ]  health display and editing
-  - [ ]  stun/uncon display and editing
+  - [x]  health display and editing
+  - [x]  stun/uncon display and editing
+  - [ ]  health/stun cleanup
+  - [ ]  refresh unit button (armor,health,statuses)
 - [ ] large:
   - [ ] add unit
     - [ ] unit/armor presets
@@ -16,6 +18,6 @@
     - [ ] single shot
     - [ ] random shot
       - [x] 1 shot
-      - [ ] multiple with dice roll
+      - [x] multiple with dice roll
       - [ ] cleanup selection menu (add ap)
       - [ ] cleanup report

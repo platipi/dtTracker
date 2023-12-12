@@ -186,6 +186,7 @@ class UnitHealth {
         if (statuses.contains(Status.stun)) {
           returnList.add("Already Stunned!");
         } else {
+          statuses.add(Status.stun);
           returnList.add("Stunned!");
         }
       }
@@ -193,11 +194,18 @@ class UnitHealth {
         if (statuses.contains(Status.uncon)) {
           returnList.add("Already Unconscious!!");
         } else {
+          statuses.add(Status.uncon);
           returnList.add("Unconscious!!");
         }
       }
       if (stunUncon.contains(Status.dead)) {
-        returnList.add("Dealt more than 50 dmg?!?!? OwO");
+        statuses.add(Status.dead);
+        if (statuses.contains(Status.dead)) {
+          returnList.add("Dealt more than 50 but ALREADY DEAD!?!?");
+        } else {
+          statuses.add(Status.dead);
+          returnList.add("Dealt more than 50 dmg?!?!? OwO");
+        }
       }
     }
 

@@ -1,5 +1,7 @@
 import 'package:dt_tracker_user/pages/login_page.dart';
+import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ReferenceWidget extends StatelessWidget {
@@ -27,11 +29,12 @@ class ReferenceWidget extends StatelessWidget {
         ),
         Text('refresh parent'),
         TextButton(
-          onPressed: () {
-            refreshParent();
-            print(units);
+          onPressed: () async {
+            curCred = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: 'email@email.com', password: 'password');
+            updateUser(refreshParent);
           },
-          child: Text('refresh'),
+          child: Text('quick login'),
         ),
       ],
     ));

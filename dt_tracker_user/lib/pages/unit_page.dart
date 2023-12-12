@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dt_tracker_user/pages/widgets/change_hp.dart';
 import 'package:dt_tracker_user/pages/widgets/change_sp.dart';
 import 'package:dt_tracker_user/pages/widgets/shot_button.dart';
 import 'package:dt_tracker_user/pages/widgets/unit_statblock.dart';
@@ -26,9 +27,19 @@ class UnitWidget extends State<UnitState> {
   int numOfDmg = 0;
   int bonusDmg = 0;
   int dieType = 6;
+  int shotCount = 0;
   bool rollDmg = false;
   late Function refreshUnit;
   List<String> report = [];
+
+  void resetData() {
+    selectedLocationIndex = -1;
+    numOfDmg = 0;
+    bonusDmg = 0;
+    dieType = 6;
+    shotCount = 0;
+    rollDmg = false;
+  }
 
   @override
   void initState() {
@@ -40,6 +51,8 @@ class UnitWidget extends State<UnitState> {
   Widget build(BuildContext context) {
     Unit unit = widget.unit;
     double screenWidth = 450;
+    double bigButtonHeight = 80;
+    double smallButtonHeight = 50;
 
     refreshUnit = () {
       saveData();
@@ -77,7 +90,7 @@ class UnitWidget extends State<UnitState> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const SizedBox(
-              height: 50,
+              height: 40,
             ),
             //unit image vvv
             SizedBox(
@@ -164,7 +177,113 @@ class UnitWidget extends State<UnitState> {
                           child: Icon(CupertinoIcons.textformat_123),
                         ),
                       ],
-                    )) //end Unit type cycle
+                    )), //end Unit type cycle
+                //Hp
+                Align(
+                  alignment: const AlignmentDirectional(-1, -1),
+                  child: GestureDetector(
+                      onTap: () => showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return changeHpWidget(unit, refreshUnit);
+                          }),
+                      child: Container(
+                          color: Colors.transparent,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    width: 30,
+                                    child: Text(
+                                      '${unit.unitHealth.damageTaken}',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.black),
+                                    )),
+                                Column(
+                                  children: List.generate(
+                                      min(
+                                          (unit.unitHealth.damageTaken / 5)
+                                                  .floor() +
+                                              (unit.unitHealth.damageTaken % 5),
+                                          unit.unitHealth.damageTaken >= 50
+                                              ? 1
+                                              : 15), (index) {
+                                    return Column(
+                                      children: [
+                                        Row(children: [
+                                          if (unit.unitHealth.damageTaken < 50)
+                                            Container(
+                                              color: Colors.black,
+                                              width: 30,
+                                              height: (index >
+                                                      (unit.unitHealth.damageTaken /
+                                                                  5)
+                                                              .floor() -
+                                                          1)
+                                                  ? 5
+                                                  : 20,
+                                            ),
+                                          if (unit.unitHealth.damageTaken >= 50)
+                                            Container(
+                                              color: Colors.black,
+                                              width: 30,
+                                              height: 50,
+                                              child: const RotatedBox(
+                                                quarterTurns: 1,
+                                                child: Text(
+                                                  'DEAD',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                          SizedBox(width: 3),
+                                          if (index == 0)
+                                            Text(unit.unitHealth.statuses
+                                                    .contains(Status.dead)
+                                                ? '***'
+                                                : unit.unitHealth.statuses
+                                                        .contains(Status.uncon)
+                                                    ? '**'
+                                                    : unit.unitHealth.statuses
+                                                            .contains(
+                                                                Status.stun)
+                                                        ? '*'
+                                                        : ''),
+                                          if (unit.unitHealth.damageTaken >
+                                                  20 &&
+                                              index > 2 &&
+                                              (index <=
+                                                  (unit.unitHealth.damageTaken /
+                                                              5)
+                                                          .floor() -
+                                                      1) &&
+                                              index !=
+                                                  (unit.unitHealth.damageTaken /
+                                                              5)
+                                                          .floor() +
+                                                      (unit.unitHealth
+                                                              .damageTaken %
+                                                          5) -
+                                                      1)
+                                            Text('-${index - 2} all'),
+                                        ]),
+                                        SizedBox(height: 3),
+                                      ],
+                                    );
+                                  }),
+                                  // children: [
+
+                                  //   Container(
+                                  //     color: Colors.black,
+                                  //     width: 30,
+                                  //     height: 20,
+                                  //   )
+                                  // ],
+                                ),
+                              ]))),
+                )
               ]),
             ),
             //bottom unit vvv
@@ -200,12 +319,13 @@ class UnitWidget extends State<UnitState> {
                               Column(children: [
                                 Row(
                                   children: [
-                                    RectButton('Single Shot', (() {})),
+                                    RectButton('Single Shot', (() {}),
+                                        bigButtonHeight),
                                     RectButton('Random Shot(s)', (() {
                                       setState(() {
                                         bottomWidget = 'randomShot';
                                       });
-                                    })),
+                                    }), bigButtonHeight),
                                   ],
                                 )
                               ]),
@@ -218,33 +338,48 @@ class UnitWidget extends State<UnitState> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Container(
-                                  height: 80,
-                                  child: Row(children: [
-                                    RectButton('Roll Location', (() {
-                                      setState(() {
-                                        randomLocation();
-                                      });
-                                    }))
-                                  ])),
+                              Row(children: [
+                                RectButton('Roll Location', (() {
+                                  setState(() {
+                                    randomLocation();
+                                  });
+                                }), bigButtonHeight)
+                              ]),
                               if (!rollDmg)
                                 Row(
                                   children: [
-                                    RectButton('0', (() {
-                                      setState(() {
-                                        numOfDmg = 0;
-                                      });
-                                    })),
-                                    RectButton('--', (() {
-                                      setState(() {
-                                        numOfDmg = max(numOfDmg! - 5, 0);
-                                      });
-                                    })),
-                                    RectButton('-', (() {
-                                      setState(() {
-                                        numOfDmg = max(numOfDmg! - 1, 0);
-                                      });
-                                    })),
+                                    RectButton(
+                                        '0',
+                                        selectedLocationIndex == -1
+                                            ? null
+                                            : (() {
+                                                setState(() {
+                                                  numOfDmg = 0;
+                                                });
+                                              }),
+                                        smallButtonHeight),
+                                    RectButton(
+                                        '--',
+                                        selectedLocationIndex == -1
+                                            ? null
+                                            : (() {
+                                                setState(() {
+                                                  numOfDmg =
+                                                      max(numOfDmg! - 5, 0);
+                                                });
+                                              }),
+                                        smallButtonHeight),
+                                    RectButton(
+                                        '-',
+                                        selectedLocationIndex == -1
+                                            ? null
+                                            : (() {
+                                                setState(() {
+                                                  numOfDmg =
+                                                      max(numOfDmg! - 1, 0);
+                                                });
+                                              }),
+                                        smallButtonHeight),
                                     TextButton(
                                         style: TextButton.styleFrom(
                                             padding: EdgeInsets.all(0),
@@ -258,38 +393,64 @@ class UnitWidget extends State<UnitState> {
                                               color: Colors.black,
                                               fontSize: fontSize * 1.25),
                                         )),
-                                    RectButton('+', (() {
-                                      setState(() {
-                                        numOfDmg = numOfDmg! + 1;
-                                      });
-                                    })),
-                                    RectButton('++', (() {
-                                      setState(() {
-                                        numOfDmg = numOfDmg! + 5;
-                                      });
-                                    })),
-                                    RectButton('R', (() {
-                                      setState(() {
-                                        numOfDmg = 1;
-                                        rollDmg = true;
-                                      });
-                                    })),
+                                    RectButton(
+                                        '+',
+                                        selectedLocationIndex == -1
+                                            ? null
+                                            : (() {
+                                                setState(() {
+                                                  numOfDmg = numOfDmg! + 1;
+                                                });
+                                              }),
+                                        smallButtonHeight),
+                                    RectButton(
+                                        '++',
+                                        selectedLocationIndex == -1
+                                            ? null
+                                            : (() {
+                                                setState(() {
+                                                  numOfDmg = numOfDmg! + 5;
+                                                });
+                                              }),
+                                        smallButtonHeight),
+                                    RectButton(
+                                        'R',
+                                        selectedLocationIndex == -1
+                                            ? null
+                                            : (() {
+                                                setState(() {
+                                                  numOfDmg = 1;
+                                                  rollDmg = true;
+                                                });
+                                              }),
+                                        smallButtonHeight),
                                   ],
                                 ),
                               if (rollDmg)
                                 Column(children: [
                                   Row(
                                     children: [
-                                      RectButton('1', (() {
-                                        setState(() {
-                                          numOfDmg = 1;
-                                        });
-                                      })),
-                                      RectButton('-', (() {
-                                        setState(() {
-                                          numOfDmg = max(numOfDmg! - 1, 1);
-                                        });
-                                      })),
+                                      RectButton(
+                                          '1',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = 1;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      RectButton(
+                                          '-',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg =
+                                                        max(numOfDmg! - 1, 1);
+                                                  });
+                                                }),
+                                          smallButtonHeight),
                                       TextButton(
                                           onPressed: (() {
                                             if (dieType == 6) {
@@ -308,26 +469,42 @@ class UnitWidget extends State<UnitState> {
                                                 color: Colors.black,
                                                 fontSize: fontSize * 1.25),
                                           )),
-                                      RectButton('+', (() {
-                                        setState(() {
-                                          numOfDmg = numOfDmg! + 1;
-                                        });
-                                      })),
-                                      RectButton('D', (() {
-                                        setState(() {
-                                          numOfDmg = 0;
-                                          rollDmg = false;
-                                        });
-                                      })),
+                                      RectButton(
+                                          '+',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = numOfDmg! + 1;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      RectButton(
+                                          'D',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = 0;
+                                                    rollDmg = false;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      RectButton('-', (() {
-                                        setState(() {
-                                          bonusDmg = max(bonusDmg! - 1, 0);
-                                        });
-                                      })),
+                                      RectButton(
+                                          '-',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    bonusDmg =
+                                                        max(bonusDmg! - 1, 0);
+                                                  });
+                                                }),
+                                          smallButtonHeight),
                                       TextButton(
                                           onPressed: (() {
                                             if (dieType == 6) {
@@ -346,28 +523,30 @@ class UnitWidget extends State<UnitState> {
                                                 color: Colors.black,
                                                 fontSize: fontSize * 1.25),
                                           )),
-                                      RectButton('+', (() {
-                                        setState(() {
-                                          bonusDmg = bonusDmg! + 1;
-                                        });
-                                      })),
+                                      RectButton(
+                                          '+',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    bonusDmg = bonusDmg! + 1;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
                                     ],
                                   ),
                                 ]),
                               Container(
-                                  height: 80,
                                   child: Row(children: [
-                                    RectButton('Deal Damage', (() {
-                                      setState(() {
-                                        report = unit.unitHealth.dealDamage(
-                                            numOfDmg,
-                                            selectedLocationIndex,
-                                            APType.Normal());
-                                      });
-                                      refreshUnit();
-                                      bottomWidget = 'afterActionReport';
-                                    }))
-                                  ])),
+                                RectButton(
+                                    'Deal Damage',
+                                    numOfDmg == 0 || selectedLocationIndex == -1
+                                        ? null
+                                        : (() {
+                                            dealDamage();
+                                          }),
+                                    bigButtonHeight)
+                              ])),
                             ],
                           ),
                         ),
@@ -376,28 +555,30 @@ class UnitWidget extends State<UnitState> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  children: report.map((e) {
-                                    return Text(e);
-                                  }).toList(),
-                                ),
+                                SizedBox(
+                                    height: 330,
+                                    child: SingleChildScrollView(
+                                        child: Column(
+                                      children: report.map((e) {
+                                        return Text(e);
+                                      }).toList(),
+                                    ))),
                                 Container(
-                                    height: 80,
+                                    height: bigButtonHeight,
                                     child: Row(
                                       children: [
                                         RectButton('Back', (() {
                                           setState(() {
+                                            resetData();
                                             bottomWidget = 'battleStats';
                                           });
-                                        })),
+                                        }), bigButtonHeight),
                                         RectButton('Roll Again', (() {
                                           setState(() {
-                                            if (!rollDmg) {
-                                              bottomWidget = 'randomShot';
-                                              randomLocation();
-                                            }
+                                            bottomWidget = 'randomShot';
+                                            randomLocation();
                                           });
-                                        }))
+                                        }), bigButtonHeight)
                                       ],
                                     ))
                               ]),
@@ -412,13 +593,35 @@ class UnitWidget extends State<UnitState> {
   }
 
   Future<void> dealDamage() async {
+    shotCount++;
     if (rollDmg == false) {
-      print('da dmg' +
-          widget.unit.unitHealth
-              .dealDamage(numOfDmg, selectedLocationIndex, APType.Normal())
-              .toString());
+      report = [];
+      if (shotCount > 1) {
+        report.add('Shot ${shotCount}:');
+      }
+      report.addAll(widget.unit.unitHealth
+          .dealDamage(numOfDmg, selectedLocationIndex, APType.Normal()));
+      numOfDmg = 0;
+    } else {
+      if (shotCount == 1) {
+        report = [];
+      }
+      List<String> tempReport = [];
+
+      tempReport.add('Shot ${shotCount}:');
+      int dmg = bonusDmg;
+      for (var i = 0; i < numOfDmg; i++) {
+        dmg += Random().nextInt(6) + 1;
+      }
+      dmg = max(dmg, 0);
+      tempReport.add('Rolled ${dmg} damage');
+
+      tempReport.addAll(widget.unit.unitHealth
+          .dealDamage(dmg, selectedLocationIndex, APType.Normal()));
+
+      report.insertAll(0, tempReport);
     }
-    await Future.delayed(const Duration(milliseconds: 10));
+    bottomWidget = 'afterActionReport';
     await refreshUnit();
   }
 
