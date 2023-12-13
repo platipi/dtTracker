@@ -22,7 +22,7 @@ class AddUnitWidget extends State<AddUnitState> {
   Function refreshParent;
   final _controller = PageController();
   int curPageIndex = 0;
-  int pagesLength = 4;
+  int pagesLength = 3;
   String name = '';
   List<ArmorLocation> armor = [
     ArmorLocation.blank(),

@@ -1,6 +1,6 @@
 - [ ] next:
   - [ ] labels on damage dealers
-  - [ ] remove extra dd unit pages for demo
+  - [x] remove extra dd unit pages for demo
   - [ ] duplicate unit
   - [ ] add to stats
   - [ ] random icons per unit
