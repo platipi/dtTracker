@@ -1,6 +1,6 @@
 - [ ] next:
-  - [ ] add to stats
   - [ ] duplicate unit
+  - [ ] add to stats
   - [ ] random icons per unit
   - [ ] add isHard to change_sp 
 
@@ -16,6 +16,7 @@
   - [ ]  health/stun cleanup
   - [ ]  refresh unit button (armor,health,statuses)
   - [ ]  better effect for null rectButtons
+  - [ ]  updating children dumb?????
 - [ ] large:
 - [ ]  unit_page cleanup
   - [] add unit

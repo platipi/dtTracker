@@ -132,7 +132,6 @@ class UnitWidget extends State<UnitState> {
                 Stack(
                     children: spPos.entries.map((e) {
                   return Container(
-                      //alignment: e.value,
                       child: GestureDetector(
                           onTap: () {
                             if (bottomWidget == 'battleStats' ||
@@ -238,7 +237,7 @@ class UnitWidget extends State<UnitState> {
                                         TextButton(
                                             onPressed: (() {
                                               units.remove(unit);
-                                              refreshParent();
+                                              refreshParent(index: 1);
                                               saveData(context);
                                               Navigator.pop(context);
                                             }),
@@ -250,14 +249,14 @@ class UnitWidget extends State<UnitState> {
                           },
                           child: Icon(CupertinoIcons.delete),
                         ),
-                        TextButton(
-                          //testing button
-                          style: customSideButton(),
-                          onPressed: () {
-                            refreshUnit();
-                          },
-                          child: Icon(CupertinoIcons.refresh),
-                        ),
+                        // TextButton(
+                        //   //testing button
+                        //   style: customSideButton(),
+                        //   onPressed: () {
+                        //     refreshUnit();
+                        //   },
+                        //   child: Icon(CupertinoIcons.refresh),
+                        // ),
                       ],
                     )), //end Unit type cycle
                 //Hp
@@ -389,12 +388,12 @@ class UnitWidget extends State<UnitState> {
                                 child: SingleChildScrollView(
                                   child: Column(
                                     children: [
-                                      StatblockState(
+                                      StatblockWidget(
                                         unit: unit,
                                         stats: 'battleStats',
                                         bigKey: 'MA',
                                       ),
-                                      StatblockState(
+                                      StatblockWidget(
                                         unit: unit,
                                         stats: 'gunStats',
                                         prefix: 'gun',
@@ -409,9 +408,9 @@ class UnitWidget extends State<UnitState> {
                               Column(children: [
                                 Row(
                                   children: [
-                                    ExpandedRectButton(
-                                        'Stats', (() {}), bigButtonHeight,
-                                        flexWeight: 1),
+                                    // ExpandedRectButton( //for when add stats button
+                                    //     'Stats', (() {}), bigButtonHeight,
+                                    //     flexWeight: 1),
                                     ExpandedRectButton('Get Shot!', (() {
                                       setState(() {
                                         bottomWidget = 'random';
@@ -726,7 +725,7 @@ class UnitWidget extends State<UnitState> {
     }
   }
 
-  Widget StatblockState(
+  Widget StatblockWidget(
       {required Unit unit,
       required String stats,
       String? prefix,
@@ -865,4 +864,3 @@ class UnitWidget extends State<UnitState> {
     );
   }
 } //end UnitWidget
-
