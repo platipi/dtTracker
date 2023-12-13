@@ -1,9 +1,12 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:flutter/material.dart';
 
-// ignore: non_constant_identifier_names
-Widget ExpandedRectButton(String text, VoidCallback? onPressed, double height) {
+Widget ExpandedRectButton(String text, VoidCallback? onPressed, double height,
+    {int? flexWeight}) {
   return Expanded(
+      flex: flexWeight ?? 1,
       child: RectButton(
           Text(
             text,
@@ -23,7 +26,7 @@ Widget RectButton(Widget child,
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(onPressed != null
                 ? Colors.white
-                : Color.fromRGBO(40, 40, 40, 1)),
+                : Color.fromRGBO(40, 40, 40, 1)), //better effect later
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
                 side: BorderSide(
                     color: Colors.black, width: 4.0, style: BorderStyle.solid),

@@ -1,4 +1,5 @@
 import 'package:dt_tracker_user/utilities/data/unit_health.dart';
+import 'package:flutter/material.dart';
 
 enum UnitType { wildcard, base, mook }
 
@@ -73,4 +74,12 @@ class ArmorLocation {
     return ArmorLocation(json['maxSp'] as int, json['curSp'] as int,
         json['isHard'] as bool, json['critInjury'] as String);
   }
+}
+
+class HitBox {
+  AlignmentDirectional relPos;
+  double width;
+  double height;
+
+  HitBox(this.relPos, {required this.width, required this.height});
 }

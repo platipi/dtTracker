@@ -5,6 +5,7 @@
   - [ ] edit name on click
   - [ ] wrong password prompts for new account
   - [ ] fix saved snackbar on unit creation
+  - [ ] fix hp overflow on lots of damage
 - [ ] medium:
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
   - [x]  health display and editing
@@ -12,6 +13,7 @@
   - [ ]  unit_page cleanup
   - [ ]  health/stun cleanup
   - [ ]  refresh unit button (armor,health,statuses)
+  - [ ]  better effect for null rectButtons
 - [ ] large:
   - [ ] add unit
     - [ ] unit/armor presets

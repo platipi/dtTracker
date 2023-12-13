@@ -81,13 +81,26 @@ class UnitWidget extends State<UnitState> {
       5: 'assets/unit_rleg.png',
       -1: 'assets/unit_sp.png'
     };
+    var hitPos = {
+      0: HitBox(AlignmentDirectional(0.1, -1.12), width: 85, height: 60), //head
+      1: HitBox(AlignmentDirectional(-0.02, -0.43),
+          width: 50, height: 90), //torso
+      2: HitBox(AlignmentDirectional(-0.39, -0.6),
+          width: 60, height: 120), //larm
+      3: HitBox(AlignmentDirectional(0.39, -0.4),
+          width: 70, height: 100), //rarm
+      4: HitBox(AlignmentDirectional(-0.32, 0.95),
+          width: 80, height: 110), //lleg
+      5: HitBox(AlignmentDirectional(0.3, 0.95), width: 80, height: 110) //rleg
+    };
+
     var spPos = {
-      0: const AlignmentDirectional(0.23, -1.18), //head
+      0: const AlignmentDirectional(0.23, -1.03), //head
       1: const AlignmentDirectional(-0.02, -0.45), //torso
-      2: const AlignmentDirectional(-0.39, -0.6), //larm
-      3: const AlignmentDirectional(0.39, -0.71), //rarm
-      4: const AlignmentDirectional(-0.36, 0.29), //lleg
-      5: const AlignmentDirectional(0.39, 0.37), //rleg
+      2: const AlignmentDirectional(-0.39, -0.525), //larm
+      3: const AlignmentDirectional(0.38, -0.615), //rarm
+      4: const AlignmentDirectional(-0.37, 0.255), //lleg
+      5: const AlignmentDirectional(0.39, 0.32), //rleg
     };
 
     return Center(
@@ -117,30 +130,50 @@ class UnitWidget extends State<UnitState> {
                 //sp values vvv
                 Stack(
                     children: spPos.entries.map((e) {
-                  return Align(
-                      alignment: e.value,
+                  return Container(
+                      //alignment: e.value,
                       child: GestureDetector(
-                          onTap: () => showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return changeSpWidget(
-                                    unit.unitHealth.armor, e.key, refreshUnit);
-                              }),
-                          child: Container(
-                            color: Colors.transparent,
-                            width: 50,
-                            height: 50,
-                            alignment: Alignment.center,
-                            child: Text(
-                                unit.unitHealth.armor[e.key].curSp.toString(),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: e.key == 1 &&
-                                          getColor(unit, 1) != Colors.yellow
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: fontSize,
-                                )),
+                          onTap: () {
+                            if (bottomWidget == 'battleStats' ||
+                                bottomWidget == 'floofStats') {
+                              print(bottomWidget);
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return changeSpWidget(unit.unitHealth.armor,
+                                        e.key, refreshUnit);
+                                  });
+                            } else {
+                              selectedLocationIndex = e.key;
+                              setState(() {});
+                            }
+                          },
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: hitPos[e.key]!.relPos,
+                                child: Container(
+                                  color: Colors.transparent,
+                                  //color: Color.fromRGBO(255, 0, 0, 0.5),//show hit detection
+                                  width: hitPos[e.key]!.width,
+                                  height: hitPos[e.key]!.height,
+                                ),
+                              ),
+                              Align(
+                                alignment: e.value!,
+                                child: Text(
+                                    unit.unitHealth.armor[e.key].curSp
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: e.key == 1 &&
+                                              getColor(unit, 1) != Colors.yellow
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: fontSize,
+                                    )),
+                              ),
+                            ],
                           )));
                 }).toList()),
                 //unit name vvv
@@ -365,9 +398,9 @@ class UnitWidget extends State<UnitState> {
                               Column(children: [
                                 Row(
                                   children: [
-                                    ExpandedRectButton('Single Shot', (() {}),
-                                        bigButtonHeight),
-                                    ExpandedRectButton('Random Shot(s)', (() {
+                                    ExpandedRectButton(
+                                        'Stats', (() {}), bigButtonHeight),
+                                    ExpandedRectButton('Get Shot!', (() {
                                       setState(() {
                                         bottomWidget = 'random';
                                       });
@@ -601,15 +634,15 @@ class UnitWidget extends State<UnitState> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(
-                                    height: MediaQuery.sizeOf(context).height *
-                                        0.43,
+                                Expanded(
+                                    // height: MediaQuery.sizeOf(context).height *
+                                    //     0.43,
                                     child: SingleChildScrollView(
                                         child: Column(
-                                      children: report.map((e) {
-                                        return Text(e);
-                                      }).toList(),
-                                    ))),
+                                  children: report.map((e) {
+                                    return Text(e);
+                                  }).toList(),
+                                ))),
                                 Container(
                                     height: bigButtonHeight,
                                     child: Row(
