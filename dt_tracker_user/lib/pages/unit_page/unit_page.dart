@@ -399,12 +399,13 @@ class UnitWidget extends State<UnitState> {
                                 Row(
                                   children: [
                                     ExpandedRectButton(
-                                        'Stats', (() {}), bigButtonHeight),
+                                        'Stats', (() {}), bigButtonHeight,
+                                        flexWeight: 1),
                                     ExpandedRectButton('Get Shot!', (() {
                                       setState(() {
                                         bottomWidget = 'random';
                                       });
-                                    }), bigButtonHeight),
+                                    }), bigButtonHeight, flexWeight: 3),
                                   ],
                                 )
                               ]),
