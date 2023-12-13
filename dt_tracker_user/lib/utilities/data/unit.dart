@@ -10,7 +10,7 @@ class Unit {
     'Endurance': '9',
     'Ref': '6',
     'WS': '9',
-    'Utility': 'a'
+    'Utility': 'None'
   };
   Map<String, dynamic> gunStats = {
     'gunName': 'A Longer Value',
@@ -23,7 +23,7 @@ class Unit {
   };
   Map<String, dynamic> floofStats = {
     'aSkill': '5',
-    'Notes': '',
+    'Notes': 'None',
   };
 
   Map<String, dynamic> getBattleStats() {

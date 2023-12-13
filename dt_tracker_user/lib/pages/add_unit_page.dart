@@ -148,29 +148,30 @@ class AddUnitWidget extends State<AddUnitState> {
           index: 2,
           children: [
             Text(
-              'Stats',
+              'Stats & Skills',
               style: TextStyle(fontSize: fontSize * 2),
             ),
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(
-              children: stats.mapTo((statName, statValue) {
+              children: stats.mapTo((statKey, statValue) {
                 return Column(
                   children: [
                     Text(
-                      statName,
+                      statKey,
                       style: TextStyle(fontSize: fontSize * 1.4),
                     ),
                     Row(
                       children: [
-                        ExpandedRectButton('0', (() {
-                          statValue = 0;
-                        }), smallButtonHeight),
-                        ExpandedRectButton('--', (() {
-                          statValue = max(statValue - 5, 0);
+                        ExpandedRectButton('3', (() {
+                          setState(() {
+                            stats[statKey] = 3;
+                          });
                         }), smallButtonHeight),
                         ExpandedRectButton('-', (() {
-                          statValue = max(statValue - 1, 0);
+                          setState(() {
+                            stats[statKey] = max(statValue - 1, 0);
+                          });
                         }), smallButtonHeight),
                         TextButton(
                           style: TextButton.styleFrom(
@@ -187,14 +188,13 @@ class AddUnitWidget extends State<AddUnitState> {
                         ),
                         ExpandedRectButton('+', (() {
                           setState(() {
-                            statValue = statValue + 1;
+                            stats[statKey] = statValue + 1;
                           });
                         }), smallButtonHeight),
-                        ExpandedRectButton('++', (() {
-                          statValue = statValue + 1;
-                        }), smallButtonHeight),
-                        ExpandedRectButton('9', (() {
-                          statValue = 10;
+                        ExpandedRectButton('10', (() {
+                          setState(() {
+                            stats[statKey] = 10;
+                          });
                         }), smallButtonHeight),
                       ],
                     ),
@@ -222,12 +222,16 @@ class AddUnitWidget extends State<AddUnitState> {
     unit.unitHealth.body = stats['Body']!;
     for (var stat in unit.battleStats.entries) {
       if (stats[stat.key] != null) {
-        unit.battleStats[stat.key] = stats[stat.key].toString();
+        unit.battleStats[stat.key] = stats[stat.key];
+      } else if (stat.key != 'Utility') {
+        unit.battleStats[stat.key] = stats['Other'];
       }
     }
     for (var stat in unit.floofStats.entries) {
       if (stats[stat.key] != null) {
-        unit.floofStats[stat.key] = stats[stat.key].toString();
+        unit.floofStats[stat.key] = stats[stat.key];
+      } else if (stat.key != 'Notes') {
+        unit.floofStats[stat.key] = stats['Other'];
       }
     }
 

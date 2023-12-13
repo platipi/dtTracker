@@ -1,5 +1,11 @@
+- [ ] next:
+  - [ ] clickable stats
+  - [ ] add to stats
+  - [ ] duplicate unit
+  - [ ] random icons per unit
+  - [ ] add isHard to change_sp 
+
 - [ ] small:
-  - [ ] add isHard to change_sp
   - [ ] add uid to local disk
   - [ ] add min swipe size to navigation
   - [ ] edit name on click
@@ -8,14 +14,12 @@
   - [ ] fix hp overflow on lots of damage
 - [ ] medium:
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
-  - [x]  health display and editing
-  - [x]  stun/uncon display and editing
-  - [ ]  unit_page cleanup
   - [ ]  health/stun cleanup
   - [ ]  refresh unit button (armor,health,statuses)
   - [ ]  better effect for null rectButtons
 - [ ] large:
-  - [ ] add unit
+- [ ]  unit_page cleanup
+  - [] add unit
     - [ ] unit/armor presets
     - [ ] weapon presets?
   - [ ] shooting
@@ -25,3 +29,8 @@
       - [x] multiple with dice roll
       - [ ] cleanup selection menu (add ap)
       - [ ] cleanup report
+
+Done:
+  - [x] add stats functionality to add_unit
+  - [x]  health display and editing
+  - [x]  stun/uncon display and editing

@@ -380,12 +380,16 @@ class UnitWidget extends State<UnitState> {
                                 child: SingleChildScrollView(
                                   child: Column(
                                     children: [
-                                      Statblock(
-                                        stats: widget.unit.getBattleStats(),
+                                      StatblockState(
+                                        updateParent: refreshUnit,
+                                        unit: unit,
+                                        stats: 'battleStats',
                                         bigKey: 'MA',
                                       ),
-                                      Statblock(
-                                        stats: widget.unit.gunStats,
+                                      StatblockState(
+                                        updateParent: refreshUnit,
+                                        unit: unit,
+                                        stats: 'gunStats',
                                         prefix: 'gun',
                                         bigKey: 'Mod. WA',
                                         bigValue:
