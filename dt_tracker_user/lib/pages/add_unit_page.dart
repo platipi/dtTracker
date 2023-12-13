@@ -50,14 +50,15 @@ class AddUnitWidget extends State<AddUnitState> {
           alignment: MainAxisAlignment.center,
           children: [
             Text(
-              'New Unit',
+              curCred != null ? 'New Unit' : 'Must Login',
               style: TextStyle(fontSize: fontSize * 2),
             ),
-            Container(
-                width: MediaQuery.sizeOf(context).width * 0.8,
-                child: TextField(
-                  onChanged: ((String value) => (name = value)),
-                ))
+            if (curCred != null)
+              Container(
+                  width: MediaQuery.sizeOf(context).width * 0.8,
+                  child: TextField(
+                    onChanged: ((String value) => (name = value)),
+                  ))
           ],
         ),
         AddUnitPage(index: 1, children: [
@@ -212,10 +213,11 @@ class AddUnitWidget extends State<AddUnitState> {
   }
 
   void SubmitUnit() {
-    if (name.isEmpty) {
+    List<String> curNames = units.map((e) => e.name).toList();
+    while (name.isEmpty || curNames.contains(name)) {
       name = GetRandomName();
     }
-    Unit unit = new Unit.simple(name, UnitHealth.empty());
+    Unit unit = Unit.simple(name, UnitHealth.empty());
     unit.unitHealth.armor = armor;
     unit.unitHealth.body = stats['Body']!;
     for (var stat in unit.battleStats.entries) {
@@ -282,7 +284,7 @@ class AddUnitWidget extends State<AddUnitState> {
                       SubmitUnit();
                       saveData(context);
                     }, bigButtonHeight),
-                  if (index == 0)
+                  if (index == 0 && curCred != null)
                     ExpandedRectButton('+', () {
                       FocusManager.instance.primaryFocus?.unfocus();
                       _controller.nextPage(

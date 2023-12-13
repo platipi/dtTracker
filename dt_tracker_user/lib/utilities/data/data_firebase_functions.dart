@@ -30,7 +30,7 @@ Future<void> loadData() async {
         }
         valid = true;
       } catch (e) {
-        print(e);
+        //print(e);
       }
       return valid;
     }
@@ -39,38 +39,39 @@ Future<void> loadData() async {
     // print(items);
     // print('========================');
     while (nextValid()) {
-      print(items[index]);
-      print('========================');
+      //print(items[index]);
+      //print('========================');
       units.add(Unit.fromJson(items[index]));
 
       index++;
     }
-
-    print(units);
-
     // print(items);
     // units = items.map((item) => Unit.fromJson(item)).toList();
     // print(units[0]);
   }
 }
 
-Future<void> saveData(context) async {
+Future<void> saveData(context, {bool showSaving = true}) async {
   if (curCred != null) {
-    try {
-      ScaffoldMessenger.of(context!).showSnackBar(
-        SnackBar(content: Text('Saving...')),
-      );
-    } catch (e) {}
+    if (showSaving) {
+      try {
+        ScaffoldMessenger.of(context!).showSnackBar(
+          SnackBar(content: Text('Saving...')),
+        );
+      } catch (e) {}
+    }
 
     await fireRef!.remove();
     await fireRef!.set(json.encode(units));
 
-    try {
-      ScaffoldMessenger.of(context!).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context!).showSnackBar(
-        SnackBar(
-            content: Text('Saved!'), duration: Duration(milliseconds: 500)),
-      );
-    } catch (e) {}
+    if (showSaving) {
+      try {
+        ScaffoldMessenger.of(context!).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context!).showSnackBar(
+          SnackBar(
+              content: Text('Saved!'), duration: Duration(milliseconds: 500)),
+        );
+      } catch (e) {}
+    }
   }
 }

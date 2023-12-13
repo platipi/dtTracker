@@ -15,10 +15,11 @@ import 'package:flutter/material.dart';
 
 class UnitState extends StatefulWidget {
   final Unit unit;
-  const UnitState({super.key, required this.unit});
+  Function refreshParent;
+  UnitState({super.key, required this.unit, required this.refreshParent});
 
   @override
-  UnitWidget createState() => UnitWidget();
+  UnitWidget createState() => UnitWidget(refreshParent);
 }
 
 class UnitWidget extends State<UnitState> {
@@ -30,7 +31,10 @@ class UnitWidget extends State<UnitState> {
   int shotCount = 0;
   bool rollDmg = false;
   late Function refreshUnit;
+  Function refreshParent;
   List<String> report = [];
+
+  UnitWidget(this.refreshParent);
 
   void resetData() {
     selectedLocationIndex = -1;
@@ -53,7 +57,12 @@ class UnitWidget extends State<UnitState> {
     double screenWidth = 450;
 
     refreshUnit = () {
-      saveData(context);
+      if (bottomWidget == 'report') {
+        saveData(context, showSaving: false);
+      } else {
+        saveData(context);
+      }
+
       setState(() {});
     };
 
@@ -176,6 +185,37 @@ class UnitWidget extends State<UnitState> {
                           },
                           child: Icon(CupertinoIcons.textformat_123),
                         ),
+                        TextButton(
+                          style: customSideButton(),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text(
+                                          'Are you sure you want to delete ${unit.name}?'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                context, 'Cancel'),
+                                            child: Text('Cancel')),
+                                        TextButton(
+                                            onPressed: (() {
+                                              units.remove(unit);
+                                              refreshParent();
+                                              saveData(context);
+                                              Navigator.pop(context);
+                                            }),
+                                            child: Text('Confirm')),
+                                      ],
+                                    );
+                                  });
+                                });
+                          },
+                          child: Icon(CupertinoIcons.delete),
+                        ),
                       ],
                     )), //end Unit type cycle
                 //Hp
@@ -189,16 +229,16 @@ class UnitWidget extends State<UnitState> {
                           }),
                       child: Container(
                           color: Colors.transparent,
-                          width: 40,
+                          width: 70,
                           height: MediaQuery.sizeOf(context).height * 0.28,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                    width: 30,
+                                    width: 50,
                                     child: Text(
-                                      '${unit.unitHealth.damageTaken}',
-                                      textAlign: TextAlign.center,
+                                      'HP:${unit.unitHealth.damageTaken}',
+                                      textAlign: TextAlign.left,
                                       style: TextStyle(color: Colors.black),
                                     )),
                                 Column(
@@ -329,7 +369,7 @@ class UnitWidget extends State<UnitState> {
                                         bigButtonHeight),
                                     ExpandedRectButton('Random Shot(s)', (() {
                                       setState(() {
-                                        bottomWidget = 'randomShot';
+                                        bottomWidget = 'random';
                                       });
                                     }), bigButtonHeight),
                                   ],
@@ -338,11 +378,11 @@ class UnitWidget extends State<UnitState> {
                             ],
                           ),
                         ),
-                      if (bottomWidget == 'randomShot')
+                      if (bottomWidget == 'random')
                         Expanded(
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(children: [
                                 ExpandedRectButton('Roll Location', (() {
@@ -556,7 +596,7 @@ class UnitWidget extends State<UnitState> {
                             ],
                           ),
                         ),
-                      if (bottomWidget == 'afterActionReport')
+                      if (bottomWidget == 'report')
                         Expanded(
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -582,7 +622,7 @@ class UnitWidget extends State<UnitState> {
                                         }), bigButtonHeight),
                                         ExpandedRectButton('Roll Again', (() {
                                           setState(() {
-                                            bottomWidget = 'randomShot';
+                                            bottomWidget = 'random';
                                             randomLocation();
                                           });
                                         }), bigButtonHeight)
@@ -628,7 +668,7 @@ class UnitWidget extends State<UnitState> {
 
       report.insertAll(0, tempReport);
     }
-    bottomWidget = 'afterActionReport';
+    bottomWidget = 'report';
     await refreshUnit();
   }
 

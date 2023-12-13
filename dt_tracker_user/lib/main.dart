@@ -71,7 +71,7 @@ class MainView extends State<MainState> {
     ];
     for (var unit in units) {
       items.add(NavBarItem(widget: Icon(Icons.person), name: unit.name));
-      navPages.add(new UnitState(unit: unit));
+      navPages.add(new UnitState(unit: unit, refreshParent: refreshNavbar));
     }
 
     _selectedIndex = index ?? _selectedIndex;

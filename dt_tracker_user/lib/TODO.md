@@ -4,6 +4,7 @@
   - [ ] add min swipe size to navigation
   - [ ] edit name on click
   - [ ] wrong password prompts for new account
+  - [ ] fix saved snackbar on unit creation
 - [ ] medium:
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
   - [x]  health display and editing
