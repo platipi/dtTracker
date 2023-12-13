@@ -1,5 +1,4 @@
 - [ ] next:
-  - [ ] clickable stats
   - [ ] add to stats
   - [ ] duplicate unit
   - [ ] random icons per unit
@@ -34,3 +33,4 @@ Done:
   - [x] add stats functionality to add_unit
   - [x]  health display and editing
   - [x]  stun/uncon display and editing
+  - [x]  clickable stats

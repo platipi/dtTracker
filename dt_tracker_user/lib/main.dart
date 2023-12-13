@@ -45,6 +45,7 @@ class MainView extends State<MainState> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      units = units;
     });
   }
 

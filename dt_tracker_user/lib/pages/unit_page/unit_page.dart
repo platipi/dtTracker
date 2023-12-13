@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:dt_tracker_user/pages/unit_page/widgets/change_hp.dart';
 import 'package:dt_tracker_user/pages/unit_page/widgets/change_sp.dart';
+import 'package:dt_tracker_user/pages/unit_page/widgets/change_stat.dart';
 import 'package:dt_tracker_user/pages/widgets/rect_button.dart';
-import 'package:dt_tracker_user/pages/unit_page/widgets/unit_statblock.dart';
 import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
@@ -29,6 +29,7 @@ class UnitWidget extends State<UnitState> {
   int bonusDmg = 0;
   int dieType = 6;
   int shotCount = 0;
+  int dumbCounter = 0; //refreshes statblock
   bool rollDmg = false;
   late Function refreshUnit;
   Function refreshParent;
@@ -249,6 +250,14 @@ class UnitWidget extends State<UnitState> {
                           },
                           child: Icon(CupertinoIcons.delete),
                         ),
+                        TextButton(
+                          //testing button
+                          style: customSideButton(),
+                          onPressed: () {
+                            refreshUnit();
+                          },
+                          child: Icon(CupertinoIcons.refresh),
+                        ),
                       ],
                     )), //end Unit type cycle
                 //Hp
@@ -381,13 +390,11 @@ class UnitWidget extends State<UnitState> {
                                   child: Column(
                                     children: [
                                       StatblockState(
-                                        updateParent: refreshUnit,
                                         unit: unit,
                                         stats: 'battleStats',
                                         bigKey: 'MA',
                                       ),
                                       StatblockState(
-                                        updateParent: refreshUnit,
                                         unit: unit,
                                         stats: 'gunStats',
                                         prefix: 'gun',
@@ -718,4 +725,144 @@ class UnitWidget extends State<UnitState> {
       await Future.delayed(const Duration(milliseconds: 10));
     }
   }
+
+  Widget StatblockState(
+      {required Unit unit,
+      required String stats,
+      String? prefix,
+      String? bigKey,
+      String? bigValue}) {
+    Map<String, dynamic> getUnitMap() {
+      if (stats == 'battleStats') {
+        return unit.battleStats;
+      } else if (stats == 'gunStats') {
+        return unit.gunStats;
+      } else if (stats == 'floofStats') {
+        return unit.floofStats;
+      }
+      return {};
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(5),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (bigKey != null)
+            GestureDetector(
+              onTap: (() {
+                if (bigValue == null) {
+                  AlertChangeStat(
+                      context: context,
+                      title: 'Change ${bigKey}',
+                      unit: unit,
+                      statKey: bigKey!,
+                      updateParent: refreshUnit);
+                } else {
+                  ScaffoldMessenger.of(context!).showSnackBar(
+                    SnackBar(
+                        content: Text('Unable to change calculated fields'),
+                        duration: Duration(milliseconds: 2500)),
+                  );
+                }
+              }),
+              child: Column(
+                children: [
+                  Container(
+                    width: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 2.0, color: Colors.black),
+                      color: Colors.black,
+                    ),
+                    child: Text(
+                      prefix == null
+                          ? bigKey!
+                          : bigKey!.replaceAll(prefix!, ''),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white, fontSize: fontSize * 1.2),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: fontSize * 2.3 + 18,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(width: 2.0, color: Colors.black),
+                    ),
+                    alignment: AlignmentDirectional(0.00, 0.00),
+                    child: Text(
+                      bigValue ?? getUnitMap()[bigKey].toString(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.black, fontSize: fontSize * 1.2),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          SizedBox(width: 3),
+          Expanded(
+            child: Wrap(
+              spacing: 0,
+              runSpacing: 3,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              direction: Axis.horizontal,
+              runAlignment: WrapAlignment.start,
+              verticalDirection: VerticalDirection.down,
+              clipBehavior: Clip.none,
+              children: getUnitMap().entries.map((e) {
+                return GestureDetector(
+                    onTap: (() {
+                      AlertChangeStat(
+                          context: context,
+                          title: 'Change ${e.key}',
+                          unit: unit,
+                          statKey: e.key,
+                          updateParent: refreshUnit);
+                    }),
+                    child: Wrap(
+                      //mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // if vvv causing an empty child on fail, leading to weird spacing on first item
+                        if (bigKey != e.key)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(width: 2.0, color: Colors.black),
+                              color: Colors.black,
+                            ),
+                            child: Text(
+                              prefix == null
+                                  ? e.key
+                                  : e.key.replaceAll(prefix!, ''),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: fontSize),
+                            ),
+                            //height: 33,
+                          ),
+                        if (bigKey != e.key)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            child: Text(
+                              e.value.toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: fontSize),
+                            ),
+                          ),
+                      ],
+                    ));
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 } //end UnitWidget
+
