@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:dt_tracker_user/pages/unit_page/widgets/change_sp.dart';
 import 'package:dt_tracker_user/pages/widgets/rect_button.dart';
+import 'package:dt_tracker_user/utilities/data/data_firebase_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_functions.dart';
 import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
@@ -11,13 +12,14 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 
 class AddUnitState extends StatefulWidget {
-  const AddUnitState({super.key});
-
+  Function refreshParent;
+  AddUnitState(this.refreshParent, {super.key});
   @override
-  AddUnitWidget createState() => AddUnitWidget();
+  AddUnitWidget createState() => AddUnitWidget(refreshParent);
 }
 
 class AddUnitWidget extends State<AddUnitState> {
+  Function refreshParent;
   final _controller = PageController();
   int curPageIndex = 0;
   int pagesLength = 4;
@@ -32,6 +34,8 @@ class AddUnitWidget extends State<AddUnitState> {
   ];
   List<bool> armorChanged = List.filled(6, false);
   Map<String, int> stats = {'Body': 6, 'Ref': 6, 'MA': 6, 'WS': 10, 'Other': 9};
+
+  AddUnitWidget(this.refreshParent);
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +211,46 @@ class AddUnitWidget extends State<AddUnitState> {
     );
   }
 
+  void SubmitUnit() {
+    if (name.isEmpty) {
+      name = GetRandomName();
+    }
+    Unit unit = new Unit.simple(name, UnitHealth.empty());
+    unit.unitHealth.armor = armor;
+    unit.unitHealth.body = stats['Body']!;
+    for (var stat in unit.battleStats.entries) {
+      if (stats[stat.key] != null) {
+        unit.battleStats[stat.key] = stats[stat.key].toString();
+      }
+    }
+    for (var stat in unit.floofStats.entries) {
+      if (stats[stat.key] != null) {
+        unit.floofStats[stat.key] = stats[stat.key].toString();
+      }
+    }
+
+    units.insert(0, unit);
+    //saveData(context);
+    ResetAddUnit();
+  }
+
+  ResetAddUnit() {
+    name = '';
+    armor = [
+      ArmorLocation.blank(),
+      ArmorLocation.blank(),
+      ArmorLocation.blank(),
+      ArmorLocation.blank(),
+      ArmorLocation.blank(),
+      ArmorLocation.blank()
+    ];
+    armorChanged = List.filled(6, false);
+    stats = {'Body': 6, 'Ref': 6, 'MA': 6, 'WS': 10, 'Other': 9};
+    _controller.animateTo(0,
+        duration: const Duration(milliseconds: 1), curve: Curves.easeIn);
+    refreshParent(index: 2);
+  }
+
   Widget AddUnitPage(
       {required List<Widget> children,
       required int index,
@@ -234,7 +278,10 @@ class AddUnitWidget extends State<AddUnitState> {
                           curve: Curves.easeIn);
                     }, bigButtonHeight),
                   if (index != 0)
-                    ExpandedRectButton('Finish', () {}, bigButtonHeight),
+                    ExpandedRectButton('Finish', () {
+                      SubmitUnit();
+                      saveData(context);
+                    }, bigButtonHeight),
                   if (index == 0)
                     ExpandedRectButton('+', () {
                       FocusManager.instance.primaryFocus?.unfocus();

@@ -4,6 +4,7 @@ import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 import '../globals.dart';
 
@@ -53,8 +54,23 @@ Future<void> loadData() async {
   }
 }
 
-Future<void> saveData() async {
-  await fireRef!.remove();
-  await fireRef!.set(json.encode(units));
-  print('saved data?');
+Future<void> saveData(context) async {
+  if (curCred != null) {
+    try {
+      ScaffoldMessenger.of(context!).showSnackBar(
+        SnackBar(content: Text('Saving...')),
+      );
+    } catch (e) {}
+
+    await fireRef!.remove();
+    await fireRef!.set(json.encode(units));
+
+    try {
+      ScaffoldMessenger.of(context!).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context!).showSnackBar(
+        SnackBar(
+            content: Text('Saved!'), duration: Duration(milliseconds: 500)),
+      );
+    } catch (e) {}
+  }
 }

@@ -88,7 +88,21 @@ String locationToString(int location) {
   }
 }
 
-Future<String> RandomName() async {
+String GetRandomName() {
+  String name = randomNames[0];
+  randomNames.removeAt(0);
+  PopulateNames();
+  return name;
+}
+
+Future<void> PopulateNames() async {
+  randomNames = [];
+  for (var i = 0; i < 5; i++) {
+    randomNames.add(await _randomName());
+  }
+}
+
+Future<String> _randomName() async {
   String nameList = await _getFileData('assets/first_names.txt');
   List<String> names = nameList.split('\n');
   return names[Random().nextInt(names.length)];

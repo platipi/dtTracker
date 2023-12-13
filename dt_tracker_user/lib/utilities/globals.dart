@@ -2,6 +2,7 @@ library globals;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 import 'data/unit.dart';
 import 'data/unit_health.dart';
@@ -13,7 +14,7 @@ int selectedLocationIndex = 1;
 double smallButtonHeight = 50;
 double bigButtonHeight = 80;
 
-List<String> names = [];
+List<String> randomNames = [];
 
 List<Unit> units = [
   //Unit.simple('mook1', UnitHealth.empty()),
