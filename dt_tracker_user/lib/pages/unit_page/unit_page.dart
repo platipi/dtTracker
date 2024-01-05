@@ -10,6 +10,7 @@ import 'package:dt_tracker_user/utilities/data/data_types.dart';
 import 'package:dt_tracker_user/utilities/data/unit.dart';
 import 'package:dt_tracker_user/utilities/globals.dart';
 import 'package:dt_tracker_user/utilities/themes_later.dart';
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -63,7 +64,7 @@ class UnitWidget extends State<UnitState> {
       } else {
         saveData(context);
       }
-
+      refreshParent();
       setState(() {});
     };
 
@@ -179,13 +180,23 @@ class UnitWidget extends State<UnitState> {
                 //unit name vvv
                 Align(
                     alignment: const AlignmentDirectional(-0.95, 0.95),
-                    child: Container(
-                      color: Colors.white,
-                      child: Text(
-                        unit.name,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: fontSize * 1.4,
+                    child: GestureDetector(
+                      onTap: (() {
+                        AlertChangeStat(
+                            context: context,
+                            title: 'Change name',
+                            unit: unit,
+                            statKey: 'name',
+                            updateParent: refreshUnit);
+                      }),
+                      child: Container(
+                        color: Colors.white,
+                        child: Text(
+                          unit.name,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: fontSize * 1.4,
+                          ),
                         ),
                       ),
                     )), //name
@@ -217,6 +228,45 @@ class UnitWidget extends State<UnitState> {
                                 });
                           },
                           child: Icon(CupertinoIcons.textformat_123),
+                        ),
+                        TextButton(
+                          style: customSideButton(),
+                          onPressed: () {
+                            Unit tempUnit = Unit.fromJson(unit.toJson());
+                            tempUnit.name = tempUnit.name.trim();
+                            var nameLength = tempUnit.name.length;
+                            var lastChar =
+                                tempUnit.name.substring(nameLength - 1);
+
+                            int? number = int.tryParse(lastChar);
+
+                            if (number != null) {
+                              number++;
+                              tempUnit.name = tempUnit.name.replaceRange(
+                                  nameLength - 1, null, number.toString());
+                            } else {
+                              number = 1;
+                              tempUnit.name += ' ${number}';
+                            }
+
+                            nameLength = tempUnit.name.length;
+                            var curIndex;
+
+                            for (var i = 0; i < units.length; i++) {
+                              if (unit == units[i]) {
+                                curIndex = i;
+                              }
+                              if (tempUnit.name == units[i].name) {
+                                number = number! + 1;
+                                tempUnit.name = tempUnit.name.replaceRange(
+                                    nameLength - 1, null, number.toString());
+                                i = -1;
+                              }
+                            }
+                            units.insert(curIndex + 1, tempUnit);
+                            refreshParent(index: curIndex + 3);
+                          },
+                          child: Icon(Icons.copy_outlined),
                         ),
                         TextButton(
                           style: customSideButton(),
@@ -413,7 +463,7 @@ class UnitWidget extends State<UnitState> {
                                     //     flexWeight: 1),
                                     ExpandedRectButton('Get Shot!', (() {
                                       setState(() {
-                                        bottomWidget = 'random';
+                                        bottomWidget = 'shot';
                                       });
                                     }), bigButtonHeight, flexWeight: 3),
                                   ],
@@ -422,7 +472,7 @@ class UnitWidget extends State<UnitState> {
                             ],
                           ),
                         ),
-                      if (bottomWidget == 'random')
+                      if (bottomWidget == 'shot')
                         Expanded(
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -436,86 +486,89 @@ class UnitWidget extends State<UnitState> {
                                 }), bigButtonHeight)
                               ]),
                               if (!rollDmg)
-                                Row(
-                                  children: [
-                                    ExpandedRectButton(
-                                        '0',
-                                        selectedLocationIndex == -1
-                                            ? null
-                                            : (() {
-                                                setState(() {
-                                                  numOfDmg = 0;
-                                                });
-                                              }),
-                                        smallButtonHeight),
-                                    ExpandedRectButton(
-                                        '--',
-                                        selectedLocationIndex == -1
-                                            ? null
-                                            : (() {
-                                                setState(() {
-                                                  numOfDmg =
-                                                      max(numOfDmg! - 5, 0);
-                                                });
-                                              }),
-                                        smallButtonHeight),
-                                    ExpandedRectButton(
-                                        '-',
-                                        selectedLocationIndex == -1
-                                            ? null
-                                            : (() {
-                                                setState(() {
-                                                  numOfDmg =
-                                                      max(numOfDmg! - 1, 0);
-                                                });
-                                              }),
-                                        smallButtonHeight),
-                                    TextButton(
-                                        style: TextButton.styleFrom(
-                                            padding: EdgeInsets.all(0),
-                                            minimumSize: Size(30, 30)),
-                                        onPressed: (() {
-                                          //hard enter value
-                                        }),
-                                        child: Text(
-                                          '${numOfDmg}',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: fontSize * 1.25),
-                                        )),
-                                    ExpandedRectButton(
-                                        '+',
-                                        selectedLocationIndex == -1
-                                            ? null
-                                            : (() {
-                                                setState(() {
-                                                  numOfDmg = numOfDmg! + 1;
-                                                });
-                                              }),
-                                        smallButtonHeight),
-                                    ExpandedRectButton(
-                                        '++',
-                                        selectedLocationIndex == -1
-                                            ? null
-                                            : (() {
-                                                setState(() {
-                                                  numOfDmg = numOfDmg! + 5;
-                                                });
-                                              }),
-                                        smallButtonHeight),
-                                    ExpandedRectButton(
-                                        'R',
-                                        selectedLocationIndex == -1
-                                            ? null
-                                            : (() {
-                                                setState(() {
-                                                  numOfDmg = 1;
-                                                  rollDmg = true;
-                                                });
-                                              }),
-                                        smallButtonHeight),
-                                  ],
-                                ),
+                                Column(children: [
+                                  Text('Damage:'),
+                                  Row(
+                                    children: [
+                                      ExpandedRectButton(
+                                          '0',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = 0;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      ExpandedRectButton(
+                                          '--',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg =
+                                                        max(numOfDmg! - 5, 0);
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      ExpandedRectButton(
+                                          '-',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg =
+                                                        max(numOfDmg! - 1, 0);
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      TextButton(
+                                          style: TextButton.styleFrom(
+                                              padding: EdgeInsets.all(0),
+                                              minimumSize: Size(30, 30)),
+                                          onPressed: (() {
+                                            //hard enter value
+                                          }),
+                                          child: Text(
+                                            '${numOfDmg}',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: fontSize * 1.25),
+                                          )),
+                                      ExpandedRectButton(
+                                          '+',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = numOfDmg! + 1;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      ExpandedRectButton(
+                                          '++',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = numOfDmg! + 5;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                      ExpandedRectButton(
+                                          'R',
+                                          selectedLocationIndex == -1
+                                              ? null
+                                              : (() {
+                                                  setState(() {
+                                                    numOfDmg = 1;
+                                                    rollDmg = true;
+                                                  });
+                                                }),
+                                          smallButtonHeight),
+                                    ],
+                                  ),
+                                ]),
                               if (rollDmg)
                                 Column(children: [
                                   Row(
@@ -651,7 +704,11 @@ class UnitWidget extends State<UnitState> {
                                     child: SingleChildScrollView(
                                         child: Column(
                                   children: report.map((e) {
-                                    return Text(e);
+                                    return Text(e,
+                                        style: TextStyle(
+                                            fontWeight: e.contains('Shot')
+                                                ? FontWeight.bold
+                                                : FontWeight.normal));
                                   }).toList(),
                                 ))),
                                 Container(
@@ -666,7 +723,7 @@ class UnitWidget extends State<UnitState> {
                                         }), bigButtonHeight),
                                         ExpandedRectButton('Roll Again', (() {
                                           setState(() {
-                                            bottomWidget = 'random';
+                                            bottomWidget = 'shot';
                                             randomLocation();
                                           });
                                         }), bigButtonHeight)
@@ -685,19 +742,26 @@ class UnitWidget extends State<UnitState> {
 
   Future<void> dealDamage() async {
     shotCount++;
+    List<String> tempReport = [];
     if (rollDmg == false) {
-      report = [];
-      if (shotCount > 1) {
-        report.add('Shot ${shotCount}:');
+      if (shotCount == 1) {
+        report = [];
       }
-      report.addAll(widget.unit.unitHealth
+      if (shotCount == 2) {
+        report.insert(0, 'Shot 1:');
+      }
+      if (shotCount > 1) {
+        tempReport.add('Shot ${shotCount}:');
+      }
+
+      tempReport.addAll(widget.unit.unitHealth
           .dealDamage(numOfDmg, selectedLocationIndex, APType.Normal()));
       numOfDmg = 0;
+      report.insertAll(0, tempReport);
     } else {
       if (shotCount == 1) {
         report = [];
       }
-      List<String> tempReport = [];
 
       tempReport.add('Shot ${shotCount}:');
       int dmg = bonusDmg;

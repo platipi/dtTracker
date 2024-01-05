@@ -51,7 +51,7 @@ Future<void> loadData() async {
   }
 }
 
-Future<void> saveData(context, {bool showSaving = true}) async {
+Future<void> saveData(context, {bool showSaving = false}) async {
   if (curCred != null) {
     if (showSaving) {
       try {
