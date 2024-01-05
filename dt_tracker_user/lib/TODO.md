@@ -1,18 +1,22 @@
 - [ ] next:
   - [ ] labels on damage dealers
-  - [x] remove extra dd unit pages for demo
-  - [ ] duplicate unit
   - [ ] add to stats
   - [ ] random icons per unit
   - [ ] add isHard to change_sp 
 
+- [ ] issues on small phones:
+  - [ ] all change value text boxes on keyboard open
+  - [ ] login page on keyboard
+  - [ ] sp alignment(what did you expect?)
 - [ ] small:
   - [ ] add uid to local disk
   - [ ] add min swipe size to navigation
-  - [ ] edit name on click
   - [ ] wrong password prompts for new account
   - [ ] fix saved snackbar on unit creation
   - [ ] fix hp overflow on lots of damage
+  - [ ] EV/MV
+  - [ ] re-order doesnt work (units list)
+  - [ ] long names on bottom bar
 - [ ] medium:
   - [ ]  be able to edit stat values by clicking on them(change_sp be more general?)
   - [ ]  health/stun cleanup
@@ -20,6 +24,7 @@
   - [ ]  better effect for null rectButtons
   - [ ]  updating children dumb?????
 - [ ] large:
+  - [ ] add new skills and such
 - [ ]  unit_page cleanup
   - [] add unit
     - [ ] unit/armor presets
@@ -27,8 +32,6 @@
   - [ ] shooting
     - [ ] single shot
     - [ ] random shot
-      - [x] 1 shot
-      - [x] multiple with dice roll
       - [ ] cleanup selection menu (add ap)
       - [ ] cleanup report
 
@@ -37,3 +40,8 @@ Done:
   - [x]  health display and editing
   - [x]  stun/uncon display and editing
   - [x]  clickable stats
+  - [x] remove extra dd unit pages for demo
+  - [x] duplicate unit
+  - [x] edit name on click
+  - [x] 1 shot
+  - [x] multiple with dice roll
